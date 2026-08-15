@@ -38,11 +38,16 @@ def load_dicom_series(folder: str):
     # Sort slices into correct anatomical order
     datasets.sort(key=lambda d: float(getattr(d, "ImagePositionPatient", [0, 0, 0])[2]))
 
-    slope = float(getattr(datasets[0], "RescaleSlope", 1))
-    intercept = float(getattr(datasets[0], "RescaleIntercept", 0))
-
-    volume = np.stack([d.pixel_array.astype(np.float32) for d in datasets], axis=0)
-    volume = volume * slope + intercept  # convert to true Hounsfield Units
+    # RescaleSlope/RescaleIntercept can differ per-slice (mixed reconstructions,
+    # or an accidental second series in the same folder). Using only
+    # datasets[0]'s values for the whole stack silently corrupts HU for any
+    # slice where they differ -- which then breaks every HU-based threshold
+    # downstream (bone, air, fat) with no error thrown. Apply per-slice.
+    volume = np.stack([
+        d.pixel_array.astype(np.float32) * float(getattr(d, "RescaleSlope", 1))
+        + float(getattr(d, "RescaleIntercept", 0))
+        for d in datasets
+    ], axis=0)
 
     return volume, datasets
 

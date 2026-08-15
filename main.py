@@ -15,7 +15,10 @@ import os
 import argparse
 
 from src.dicom_io import load_dicom_series, dicom_folder_to_nifti
-from src.segment import run_totalsegmentator, load_masks, merge_masks, derive_air_mask
+from src.segment import (
+    run_totalsegmentator, load_masks, merge_masks,
+    derive_air_mask, derive_body_mask, get_bone_classes,
+)
 from src.label_mapping import AUTO_LABEL_MAP, MANUAL_ONLY_ORGANS
 from src.annotate import save_annotated_series
 
@@ -36,20 +39,27 @@ def main():
     parser.add_argument("--width", type=int, default=400, help="CT window width (HU)")
     parser.add_argument("--alpha", type=float, default=0.45, help="Overlay opacity 0-1")
     parser.add_argument("--no-legend", action="store_true", help="Don't draw the color-key panel")
+    parser.add_argument("--no-fat", action="store_true",
+                         help="Skip the extra tissue_types model run for FAT (faster, no FAT color)")
     args = parser.parse_args()
 
     nifti_path = os.path.join(args.out, "volume.nii.gz")
     seg_dir = os.path.join(args.out, "segmentation_masks")
+    fat_dir = os.path.join(args.out, "segmentation_masks_fat")
     slices_dir = os.path.join(args.out, "annotated_slices")
 
-    print("Step 1/4: Loading DICOM series...")
+    print("Step 1/5: Loading DICOM series...")
     volume_hu, dicom_slices = load_dicom_series(args.dicom_dir)
     dicom_folder_to_nifti(args.dicom_dir, nifti_path)
 
+    # Overwrite the static fallback BONES list with whatever bone classes
+    # your installed TotalSegmentator version actually ships -- this fixes
+    # incomplete/incorrect bone output caused by a hand-typed partial list.
+    AUTO_LABEL_MAP["BONES"] = get_bone_classes(task="total")
+
     all_ts_classes = sorted({c for classes in AUTO_LABEL_MAP.values() if classes for c in classes})
 
-    print("Step 2/4: Running TotalSegmentator (this can take a while on first run "
-          "while it downloads model weights)...")
+    print("Step 2/5: Running TotalSegmentator 'total' task (organs + bones)...")
     # roi_subset restricts the model to only the organ classes this project
     # actually uses, instead of all ~117 -- this is what gives the big
     # speedup (roughly 5x on GPU, 32x on CPU per TotalSegmentator's own
@@ -67,7 +77,7 @@ def main():
         task="total",
     )
 
-    print("Step 3/4: Mapping segmentation output to your color legend...")
+    print("Step 3/5: Mapping segmentation output to your color legend...")
     raw_masks = load_masks(seg_dir, all_ts_classes)
 
     organ_masks = {}
@@ -78,12 +88,30 @@ def main():
         if merged is not None:
             organ_masks[organ] = merged
 
-    if "BONES" in organ_masks or True:
-        # crude body mask so AIR isn't colored outside the patient:
-        body_mask = volume_hu > -500
-        organ_masks["AIR"] = derive_air_mask(volume_hu, body_mask=body_mask)
+    # AIR: derived from HU, restricted to a REAL filled body mask (not a
+    # raw threshold, which was always empty -- see derive_body_mask docstring).
+    body_mask = derive_body_mask(volume_hu, hu_threshold=-500)
+    organ_masks["AIR"] = derive_air_mask(volume_hu, body_mask=body_mask)
 
-    print("Step 4/4: Rendering annotated slices...")
+    # FAT: TotalSegmentator's "total" task has no fat class -- it lives in
+    # the separate "tissue_types" task. Run that model too and merge it in.
+    if not args.no_fat:
+        print("Step 4/5: Running TotalSegmentator 'tissue_types' task (FAT)...")
+        run_totalsegmentator(
+            nifti_path, fat_dir,
+            fast=args.fast,
+            fastest=args.fastest,
+            device=args.device,
+            body_seg=True,
+            roi_subset=["subcutaneous_fat", "torso_fat"],
+            task="tissue_types",
+        )
+        fat_masks = load_masks(fat_dir, ["subcutaneous_fat", "torso_fat"])
+        organ_masks["FAT"] = merge_masks(fat_masks, ["subcutaneous_fat", "torso_fat"])
+    else:
+        print("Step 4/5: Skipping FAT (--no-fat)")
+
+    print("Step 5/5: Rendering annotated slices...")
     save_annotated_series(volume_hu, organ_masks, slices_dir,
                            level=args.level, width=args.width,
                            alpha=args.alpha, with_legend=not args.no_legend)

@@ -15,14 +15,15 @@ install:
     TotalSegmentator --help
     python -c "from totalsegmentator.map_to_binary import class_map; print(class_map['total'])"
 
-and adjust the lists below if a name differs.
+BONES is left as a static fallback list here, but main.py overwrites it at
+runtime with src.segment.get_bone_classes(), which reads the real class
+list from your installed TotalSegmentator version instead of trusting this
+hardcoded list. Keep this list only as a reference / offline fallback.
 
-NOTE: FAT ("subcutaneous_fat"/"torso_fat") and the generic "skeletal_muscle"
-class were removed on purpose -- they only exist in TotalSegmentator's
-separate, slower "tissue_types" task, and requiring a second model run for
-just those 3 classes was roughly doubling total runtime. MUSCLE below still
-covers the real named muscle groups (autochthon, iliopsoas, gluteus_*),
-which are fast, normal "total"-task classes.
+FAT ("subcutaneous_fat"/"torso_fat") is NOT in AUTO_LABEL_MAP below --
+it only exists in TotalSegmentator's separate "tissue_types" task, so it's
+handled as its own extra TotalSegmentator call in main.py (same pattern as
+AIR being handled separately from HU thresholding).
 """
 
 # organ (matches color_map.py keys) -> list of TotalSegmentator class names
@@ -35,6 +36,8 @@ AUTO_LABEL_MAP = {
                "gluteus_medius_left", "gluteus_medius_right",
                "gluteus_minimus_left", "gluteus_minimus_right"],
     "KIDNEYS": ["kidney_left", "kidney_right"],
+    # Static fallback only -- main.py overwrites this with
+    # get_bone_classes() so the real installed class list is used.
     "BONES": ["sacrum", "hip_left", "hip_right", "femur_left", "femur_right",
               "vertebrae_L1", "vertebrae_L2", "vertebrae_L3", "vertebrae_L4",
               "vertebrae_L5", "vertebrae_T9", "vertebrae_T10", "vertebrae_T11",
@@ -56,15 +59,18 @@ AUTO_LABEL_MAP = {
               "lung_lower_lobe_right"],
     "BOWEL": ["small_bowel", "duodenum", "colon"],
     # AIR is not a TotalSegmentator class -- it is derived directly from the
-    # Hounsfield Unit range (see src/annotate.py: HU < -900 inside the body).
+    # Hounsfield Unit range (see src/segment.py: derive_air_mask, HU < -900
+    # inside a filled body mask).
     "AIR": None,
+    # FAT is not in this dict -- it comes from a separate TotalSegmentator
+    # "tissue_types" task call in main.py (subcutaneous_fat + torso_fat),
+    # merged into organ_masks["FAT"] there.
 }
 
-# These have NO public pretrained segmentation model anywhere (or were
-# dropped for speed -- see FAT above). There is nothing to "fetch from the
-# internet" here -- to color these you must either trace them by hand
-# slice-by-slice (see README) or train a custom model yourself on
-# manually-labeled examples first.
+# These have NO public pretrained segmentation model anywhere. There is
+# nothing to "fetch from the internet" here -- to color these you must
+# either trace them by hand slice-by-slice (see README) or train a custom
+# model yourself on manually-labeled examples first.
 MANUAL_ONLY_ORGANS = [
     "PERITONEUM",
     "SCROTUM",
@@ -72,5 +78,4 @@ MANUAL_ONLY_ORGANS = [
     "VAGINA/CERVICAL CANAL",
     "PENIS",
     "ANUS",
-    "FAT",
 ]
