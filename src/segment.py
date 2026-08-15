@@ -19,10 +19,7 @@ from scipy import ndimage
 def get_valid_classes(task: str):
     """
     Returns the set of valid ROI class names for a given TotalSegmentator
-    task, read directly from the installed package's own class map. This
-    is what fixes recurring KeyError: '<name>' crashes -- class lists
-    differ between package versions, so instead of hardcoding names we ask
-    the installed version what it actually supports.
+    task, read directly from the installed package's own class map.
     """
     from totalsegmentator.map_to_binary import class_map
     if task not in class_map:
@@ -38,8 +35,7 @@ def get_bone_classes(task: str = "total"):
     Pulls every bone-related class actually shipped by your installed
     TotalSegmentator version (vertebrae, ribs, sacrum, hip, femur, sternum,
     scapula, clavicula, costal cartilage, skull), instead of a hand-typed
-    partial list that goes stale across versions and silently drops
-    classes. This is what was causing incomplete/incorrect bone output.
+    partial list that goes stale across versions.
     """
     from totalsegmentator.map_to_binary import class_map
     prefixes = ("vertebrae_", "rib_", "sacrum", "hip_", "femur_",
@@ -47,16 +43,29 @@ def get_bone_classes(task: str = "total"):
     return sorted(c for c in class_map[task].values() if c.startswith(prefixes))
 
 
+def get_muscle_classes(task: str = "total"):
+    """
+    Pulls every named individual muscle class your installed
+    TotalSegmentator version ships (autochthon, iliopsoas, gluteus, and any
+    others -- e.g. obturator/levator if a future version adds them),
+    instead of a hardcoded partial list. This is separate from (and
+    complements) the generic "skeletal_muscle" catch-all class that only
+    exists in the "tissue_types" task -- see main.py Step 4.
+    """
+    from totalsegmentator.map_to_binary import class_map
+    prefixes = ("autochthon_", "iliopsoas_", "gluteus_", "obturator_",
+                "levator_", "pectineus_", "adductor_", "sartorius_",
+                "quadriceps_", "hamstrings_")
+    return sorted(c for c in class_map[task].values() if c.startswith(prefixes))
+
+
 # Tasks that only ship a single full-resolution model -- passing
-# --fast/--fastest to these makes TotalSegmentator raise a ValueError and
-# crash the whole run. "total" (and a few others) support --fast; these
-# don't.
+# --fast/--fastest to these crashes with a ValueError.
 NO_FAST_TASKS = {"tissue_types"}
 
-# Tasks where TotalSegmentator's own CLI rejects --roi_subset outright
+# Tasks where TotalSegmentator's CLI rejects --roi_subset outright
 # ("roi_subset only works with task 'total' or 'total_mr'"). For these we
-# run the full (small) task and filter down to what we need afterward in
-# load_masks() instead of passing --roi_subset on the command line.
+# run the full (small) task and filter afterward in load_masks().
 NO_ROI_SUBSET_TASKS = {"tissue_types"}
 
 
@@ -68,26 +77,15 @@ def run_totalsegmentator(nifti_path: str, out_dir: str, fast: bool = False,
     Calls the TotalSegmentator CLI. Requires `pip install TotalSegmentator`.
     Writes one .nii.gz file per structure into out_dir.
 
-    - roi_subset: pass ONLY the class names you actually need instead of
-      predicting all ~117 structures. Any name not valid for `task` in
-      your installed TotalSegmentator version is dropped with a warning
-      instead of crashing the whole run. Ignored (with a note) for tasks
-      in NO_ROI_SUBSET_TASKS that don't support the flag at all -- those
-      tasks just produce all of their (few) classes, and you filter with
-      load_masks() afterward.
-    - body_seg: crops to the body region first, skipping empty
-      background/table/air around the patient. Free speedup, no accuracy
-      cost.
-    - fast: uses the 3mm low-res model instead of 1.5mm (faster, coarser)
-      -- recommended for annotation/overlay use. Ignored (with a note) for
+    - roi_subset: restricts the model to only the classes you need. Ignored
+      (with a note) for tasks in NO_ROI_SUBSET_TASKS that don't support it.
+    - body_seg: crops to the body region first -- free speedup, no accuracy cost.
+    - fast: 3mm low-res model instead of 1.5mm. Ignored (with a note) for
       tasks in NO_FAST_TASKS that don't support it.
-    - fastest: an even lower-res pass, good for a quick sanity check while
-      testing, not for final output. Same NO_FAST_TASKS handling as fast.
-    - device: "gpu" (default, auto-detects CUDA), "mps" (Apple Silicon
-      Metal), or "cpu".
-    - task: which TotalSegmentator task/model to use ("total" for organs/
-      bones, "tissue_types" for subcutaneous/torso fat + skeletal muscle,
-      requires a free license -- see README).
+    - fastest: even lower-res, quick sanity check only.
+    - device: "gpu" (default, auto CUDA), "mps" (Apple Silicon), or "cpu".
+    - task: "total" for organs/bones, "tissue_types" for fat + generic
+      skeletal muscle (requires a free license, see README).
     """
     os.makedirs(out_dir, exist_ok=True)
 
@@ -131,9 +129,7 @@ def run_totalsegmentator(nifti_path: str, out_dir: str, fast: bool = False,
 def load_masks(seg_dir: str, class_names):
     """
     Loads only the requested class .nii.gz files from seg_dir.
-    Returns dict[class_name] -> bool ndarray [z, y, x], skipping any that
-    weren't found (prints a warning instead of crashing, since not every
-    scan/version produces every class).
+    Returns dict[class_name] -> bool ndarray [z, y, x].
     """
     masks = {}
     for name in class_names:
@@ -143,8 +139,6 @@ def load_masks(seg_dir: str, class_names):
             continue
         img = nib.load(path)
         data = np.asarray(img.dataobj)
-        # TotalSegmentator masks are [x, y, z]; reorder to [z, y, x] to match
-        # the volume convention used elsewhere in this project.
         masks[name] = np.transpose(data, (2, 1, 0)) > 0
     return masks
 
@@ -163,9 +157,7 @@ def merge_masks(masks: dict, class_names: list):
 def derive_body_mask(volume_hu: np.ndarray, hu_threshold: float = -500):
     """
     Real body mask: threshold, then fill holes per-slice so internal air
-    pockets (bowel gas, lungs) and dense bone still count as 'inside the
-    body'. A plain HU > threshold mask excludes air by definition -- that
-    was the bug that made AIR always come out empty.
+    pockets and bone still count as 'inside the body'.
     """
     rough = volume_hu > hu_threshold
     filled = np.zeros_like(rough)
@@ -177,12 +169,7 @@ def derive_body_mask(volume_hu: np.ndarray, hu_threshold: float = -500):
 def derive_air_mask(volume_hu: np.ndarray, body_mask: np.ndarray = None,
                      hu_threshold: float = -900):
     """
-    AIR has no TotalSegmentator class -- it's derived directly from
-    Hounsfield Units. Anything below hu_threshold is gas. If a body_mask
-    is supplied, air is restricted to inside the body (so background
-    outside the patient isn't colored). Pass a body_mask built with
-    derive_body_mask() above, NOT a raw `volume_hu > X` mask -- a raw
-    threshold above -900 will always cancel out anything below -900.
+    AIR is derived directly from HU (< -900), restricted to inside the body.
     """
     air = volume_hu < hu_threshold
     if body_mask is not None:
@@ -193,12 +180,53 @@ def derive_air_mask(volume_hu: np.ndarray, body_mask: np.ndarray = None,
 def derive_fat_mask(volume_hu: np.ndarray, body_mask: np.ndarray = None,
                      hu_low: float = -190, hu_high: float = -30):
     """
-    HU-threshold fallback for FAT, in case the tissue_types license isn't
-    set up. Fat is a well-known HU band, roughly -190 to -30 HU. Less
-    precise than the licensed tissue_types model (can't separate visceral
-    vs subcutaneous fat) but needs no extra model/license.
+    HU-threshold fallback for FAT (-190 to -30 HU), used automatically if
+    the tissue_types model run fails (e.g. no license set yet).
     """
     fat = (volume_hu >= hu_low) & (volume_hu <= hu_high)
     if body_mask is not None:
         fat = fat & body_mask
     return fat
+
+
+def load_manual_masks(manual_dir: str, organ_names):
+    """
+    Loads hand-traced masks for organs with NO public pretrained model
+    (PERITONEUM, SCROTUM, URETHRA, VAGINA/CERVICAL CANAL, PENIS, ANUS).
+    Trace these in 3D Slicer or ITK-SNAP and export each as its own
+    .nii.gz into manual_dir, named EXACTLY after the organ key in
+    color_map.py, e.g.:
+        manual_masks/PERITONEUM.nii.gz
+        manual_masks/SCROTUM.nii.gz
+    Must be on the SAME volume grid as volume.nii.gz or the overlay won't
+    align. Any organ with no file present is skipped, not an error.
+    """
+    if not os.path.isdir(manual_dir):
+        return {}
+    masks = {}
+    for name in organ_names:
+        path = os.path.join(manual_dir, f"{name}.nii.gz")
+        if not os.path.exists(path):
+            continue
+        img = nib.load(path)
+        data = np.asarray(img.dataobj)
+        masks[name] = np.transpose(data, (2, 1, 0)) > 0
+        print(f"  [manual] loaded traced mask for '{name}'")
+    return masks
+
+
+def derive_other_tissue_mask(body_mask: np.ndarray, assigned_masks: dict):
+    """
+    Fallback catch-all: everything inside the body that isn't already
+    claimed by a real organ mask. This is NOT organ identification -- it's
+    a visual fill so nothing shows as plain uncolored CT. Typically catches
+    small residual gaps: manual-only-organ regions (anus, urethra,
+    peritoneum, etc.) and any tissue no loaded model classified. Colored
+    with a distinct neutral color in color_map.py ("OTHER TISSUE") so it's
+    never mistaken for a real diagnosis.
+    """
+    claimed = np.zeros_like(body_mask)
+    for m in assigned_masks.values():
+        if m is not None:
+            claimed = claimed | m
+    return body_mask & ~claimed

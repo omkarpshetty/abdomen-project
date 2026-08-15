@@ -17,7 +17,8 @@ import argparse
 from src.dicom_io import load_dicom_series, dicom_folder_to_nifti
 from src.segment import (
     run_totalsegmentator, load_masks, merge_masks,
-    derive_air_mask, derive_body_mask, get_bone_classes,
+    derive_air_mask, derive_body_mask, get_bone_classes, get_muscle_classes,
+    derive_fat_mask, load_manual_masks, derive_other_tissue_mask,
 )
 from src.label_mapping import AUTO_LABEL_MAP, MANUAL_ONLY_ORGANS
 from src.annotate import save_annotated_series
@@ -33,14 +34,19 @@ def main():
                          help="gpu (default, auto CUDA), mps (Apple Silicon), or cpu")
     parser.add_argument("--all-classes", action="store_true",
                          help="Predict all ~117 TotalSegmentator structures instead of just the "
-                              "organs this project needs. Much slower -- only use if you want "
-                              "the full raw output for something else.")
+                              "organs this project needs. Much slower.")
     parser.add_argument("--level", type=int, default=40, help="CT window level (HU)")
     parser.add_argument("--width", type=int, default=400, help="CT window width (HU)")
     parser.add_argument("--alpha", type=float, default=0.45, help="Overlay opacity 0-1")
     parser.add_argument("--no-legend", action="store_true", help="Don't draw the color-key panel")
     parser.add_argument("--no-fat", action="store_true",
-                         help="Skip the extra tissue_types model run for FAT (faster, no FAT color)")
+                         help="Skip the tissue_types model run for FAT/MUSCLE (uses HU-threshold FAT fallback)")
+    parser.add_argument("--manual-masks-dir", default=None,
+                         help="Folder of hand-traced .nii.gz masks (named after organs with no "
+                              "pretrained model, e.g. PERITONEUM.nii.gz) to merge into the overlay.")
+    parser.add_argument("--no-other-tissue", action="store_true",
+                         help="Don't fill remaining unclaimed body tissue with the 'OTHER TISSUE' "
+                              "catch-all color -- leave it as plain CT instead.")
     args = parser.parse_args()
 
     nifti_path = os.path.join(args.out, "volume.nii.gz")
@@ -52,21 +58,14 @@ def main():
     volume_hu, dicom_slices = load_dicom_series(args.dicom_dir)
     dicom_folder_to_nifti(args.dicom_dir, nifti_path)
 
-    # Overwrite the static fallback BONES list with whatever bone classes
-    # your installed TotalSegmentator version actually ships -- this fixes
-    # incomplete/incorrect bone output caused by a hand-typed partial list.
+    # Overwrite the static fallback BONES/MUSCLE lists with whatever
+    # classes your installed TotalSegmentator version actually ships.
     AUTO_LABEL_MAP["BONES"] = get_bone_classes(task="total")
+    AUTO_LABEL_MAP["MUSCLE"] = get_muscle_classes(task="total")
 
     all_ts_classes = sorted({c for classes in AUTO_LABEL_MAP.values() if classes for c in classes})
 
-    print("Step 2/5: Running TotalSegmentator 'total' task (organs + bones)...")
-    # roi_subset restricts the model to only the organ classes this project
-    # actually uses, instead of all ~117 -- this is what gives the big
-    # speedup (roughly 5x on GPU, 32x on CPU per TotalSegmentator's own
-    # benchmarks) compared to running the full "total" task every time.
-    # Any class name your installed TotalSegmentator doesn't recognize for
-    # this task is skipped automatically (with a warning) instead of
-    # crashing the whole run -- see get_valid_classes() in src/segment.py.
+    print("Step 2/5: Running TotalSegmentator 'total' task (organs + bones + named muscles)...")
     run_totalsegmentator(
         nifti_path, seg_dir,
         fast=args.fast,
@@ -83,33 +82,63 @@ def main():
     organ_masks = {}
     for organ, ts_classes in AUTO_LABEL_MAP.items():
         if ts_classes is None:
-            continue  # handled separately (AIR)
+            continue
         merged = merge_masks(raw_masks, ts_classes)
         if merged is not None:
             organ_masks[organ] = merged
 
-    # AIR: derived from HU, restricted to a REAL filled body mask (not a
-    # raw threshold, which was always empty -- see derive_body_mask docstring).
     body_mask = derive_body_mask(volume_hu, hu_threshold=-500)
     organ_masks["AIR"] = derive_air_mask(volume_hu, body_mask=body_mask)
 
-    # FAT: TotalSegmentator's "total" task has no fat class -- it lives in
-    # the separate "tissue_types" task. Run that model too and merge it in.
+    # FAT + generic MUSCLE: the "tissue_types" task has subcutaneous_fat,
+    # torso_fat, and skeletal_muscle -- skeletal_muscle is a catch-all
+    # "this is muscle tissue" class covering muscle the "total" task
+    # doesn't name individually (e.g. pelvic floor), so it's merged into
+    # MUSCLE on top of whatever get_muscle_classes() already found.
     if not args.no_fat:
-        print("Step 4/5: Running TotalSegmentator 'tissue_types' task (FAT)...")
-        run_totalsegmentator(
-            nifti_path, fat_dir,
-            fast=args.fast,
-            fastest=args.fastest,
-            device=args.device,
-            body_seg=True,
-            roi_subset=["subcutaneous_fat", "torso_fat"],
-            task="tissue_types",
-        )
-        fat_masks = load_masks(fat_dir, ["subcutaneous_fat", "torso_fat"])
-        organ_masks["FAT"] = merge_masks(fat_masks, ["subcutaneous_fat", "torso_fat"])
+        print("Step 4/5: Running TotalSegmentator 'tissue_types' task (FAT + generic MUSCLE)...")
+        try:
+            run_totalsegmentator(
+                nifti_path, fat_dir,
+                fast=args.fast,
+                fastest=args.fastest,
+                device=args.device,
+                body_seg=True,
+                roi_subset=["subcutaneous_fat", "torso_fat", "skeletal_muscle"],
+                task="tissue_types",
+            )
+            tissue_masks = load_masks(fat_dir, ["subcutaneous_fat", "torso_fat", "skeletal_muscle"])
+            organ_masks["FAT"] = merge_masks(tissue_masks, ["subcutaneous_fat", "torso_fat"])
+
+            skeletal_muscle_mask = tissue_masks.get("skeletal_muscle")
+            if skeletal_muscle_mask is not None:
+                existing_muscle = organ_masks.get("MUSCLE")
+                organ_masks["MUSCLE"] = (
+                    skeletal_muscle_mask if existing_muscle is None
+                    else (existing_muscle | skeletal_muscle_mask)
+                )
+        except Exception as e:
+            print(f"  [warn] tissue_types run failed ({e}) -- falling back to HU-threshold FAT")
+            organ_masks["FAT"] = derive_fat_mask(volume_hu, body_mask=body_mask)
     else:
-        print("Step 4/5: Skipping FAT (--no-fat)")
+        print("Step 4/5: Skipping model FAT/MUSCLE -- using HU-threshold FAT fallback")
+        organ_masks["FAT"] = derive_fat_mask(volume_hu, body_mask=body_mask)
+
+    # MANUAL-ONLY ORGANS: no public model exists for these (peritoneum,
+    # scrotum, urethra, vagina/cervical canal, penis, anus). If you've
+    # hand-traced any of them and passed --manual-masks-dir, merge them in.
+    still_uncolored = list(MANUAL_ONLY_ORGANS)
+    if args.manual_masks_dir:
+        manual_masks = load_manual_masks(args.manual_masks_dir, MANUAL_ONLY_ORGANS)
+        for organ, mask in manual_masks.items():
+            organ_masks[organ] = mask
+            still_uncolored.remove(organ)
+
+    # OTHER TISSUE: purely visual catch-all for whatever's still gray after
+    # everything above -- NOT a diagnosis, just fills remaining gaps
+    # (see derive_other_tissue_mask docstring).
+    if not args.no_other_tissue:
+        organ_masks["OTHER TISSUE"] = derive_other_tissue_mask(body_mask, organ_masks)
 
     print("Step 5/5: Rendering annotated slices...")
     save_annotated_series(volume_hu, organ_masks, slices_dir,
@@ -118,10 +147,13 @@ def main():
 
     print("\nDone.")
     print(f"Annotated slices: {slices_dir}")
-    print("\nNOTE: the following organs from your legend have NO public pretrained")
-    print("model and were NOT colored automatically (see README):")
-    for o in MANUAL_ONLY_ORGANS:
-        print(f"  - {o}")
+    if still_uncolored:
+        print("\nNOTE: the following organs have NO public pretrained model and were")
+        print("NOT identified as themselves (though 'OTHER TISSUE' may visually cover")
+        print("their location). Trace them manually in 3D Slicer/ITK-SNAP and rerun")
+        print("with --manual-masks-dir for accurate per-organ coloring:")
+        for o in still_uncolored:
+            print(f"  - {o}")
 
 
 if __name__ == "__main__":

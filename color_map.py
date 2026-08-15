@@ -32,6 +32,7 @@ ORGAN_COLORS = {
     "LUNGS":            {"rgb": (131, 245, 5),   "hex": "#83F505", "auto": True},
     "BOWEL":            {"rgb": (0, 112, 192),   "hex": "#0070C0", "auto": True},
     "AIR":               {"rgb": (0, 0, 0),       "hex": "#000000", "auto": True},   # derived from HU threshold, not a TS class
+    "OTHER TISSUE":     {"rgb": (150, 150, 178), "hex": "#9696B2", "auto": True},    # catch-all fill, NOT a real organ ID -- see README
     "PERITONEUM":       {"rgb": (30, 30, 30),    "hex": "#1E1E1E", "auto": False},
     "SCROTUM":          {"rgb": (204, 255, 51),  "hex": "#CCFF33", "auto": False},
     "URETHRA":          {"rgb": (29, 197, 133),  "hex": "#1DC585", "auto": False},
