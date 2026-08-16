@@ -1,0 +1,16 @@
+organ,volume_cm3,estimated_dose_mGy,note
+LIVER,1495.8651341400146,16.56,
+HEART,381.12466925811765,14.4,no published ratio -- rough estimate
+SPLEEN,104.1980506362915,16.848,
+MUSCLE,1848.401495170593,14.4,no published ratio -- rough estimate
+KIDNEYS,299.45348175048827,17.424,
+BONES,1187.0028420867918,14.4,no published ratio -- rough estimate
+STOMACH,173.36185329437254,14.4,no published ratio -- rough estimate
+VESSELS,255.57585678100585,14.4,no published ratio -- rough estimate
+SPINAL CORD,46.207210212707515,13.104000000000001,
+PROSTATE,0.0,14.4,no published ratio -- rough estimate
+URINARY BLADDER,170.94179872131346,14.4,no published ratio -- rough estimate
+PANCREAS,58.57889106750488,16.848,
+GALL BLADDER,18.365273956298825,14.4,no published ratio -- rough estimate
+LUNGS,2172.304313308716,14.4,no published ratio -- rough estimate
+BOWEL,1102.5044880218504,14.4,no published ratio -- rough estimate
