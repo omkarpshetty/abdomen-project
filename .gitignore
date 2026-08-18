@@ -1,3 +1,4 @@
+cnn_slices/
 venv/
 __pycache__/
 *.pyc
