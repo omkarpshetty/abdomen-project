@@ -9,6 +9,13 @@ mean HU -- the real training features for a learned organ-dose model.
 This is heavier than batch_extract_features.py (that one skips
 TotalSegmentator entirely) -- budget real time for this to run.
 
+RESUMABLE: writes each patient's result to --out immediately after it
+finishes (not saved up until the end), and on a fresh run automatically
+skips any (UID, PHASE) already present in an existing --out file. This
+means if Colab disconnects or the runtime resets partway through, you can
+just rerun the exact same command and it picks up where it left off
+instead of losing all prior progress.
+
 Usage:
     python batch_extract_organ_features.py --root "C:\\Users\\omkar\\OneDrive\\Desktop\\major project\\1-144" --out organ_features.csv --fast --device cpu --limit 40
 """
@@ -20,6 +27,7 @@ import csv
 import shutil
 import numpy as np
 import nibabel as nib
+import pandas as pd
 
 from src.dicom_io import load_dicom_series, dicom_folder_to_nifti
 from src.segment import (
@@ -92,8 +100,24 @@ def main():
         matched = matched[:args.limit]
     print(f"Processing {len(matched)} folder(s).")
 
-    rows = []
+    fieldnames = ["UID", "PHASE", "organ", "volume_cm3", "mean_hu"]
+    file_exists = os.path.exists(args.out)
+    already_done = set()
+    if file_exists:
+        existing = pd.read_csv(args.out, dtype={"UID": str})
+        already_done = set(zip(existing["UID"], existing["PHASE"]))
+        print(f"Resuming: {len(already_done)} (UID, PHASE) pairs already in {args.out}, will skip those.")
+
+    csv_file = open(args.out, "a" if file_exists else "w", newline="")
+    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+    if not file_exists:
+        writer.writeheader()
+
+    total_rows = 0
     for i, (folder, uid, phase) in enumerate(matched, 1):
+        if (uid, phase) in already_done:
+            print(f"[{i}/{len(matched)}] {folder} -- already done, skipping")
+            continue
         dicom_dir = os.path.join(args.root, folder)
         t0 = time.time()
         try:
@@ -101,25 +125,18 @@ def main():
             for r in organ_results:
                 r["UID"] = uid
                 r["PHASE"] = phase
-                rows.append(r)
+                writer.writerow(r)
+                total_rows += 1
+            csv_file.flush()  # write to disk immediately, don't wait for buffer
             print(f"[{i}/{len(matched)}] {folder} done in {time.time()-t0:.1f}s "
-                  f"({len(organ_results)} organs)")
+                  f"({len(organ_results)} organs) -- saved to disk")
         except Exception as e:
             print(f"[{i}/{len(matched)}] {folder} FAILED: {e}")
         finally:
             shutil.rmtree(args.tmp_dir, ignore_errors=True)  # free disk space between patients
 
-    if not rows:
-        print("No patients processed successfully.")
-        return
-
-    fieldnames = ["UID", "PHASE", "organ", "volume_cm3", "mean_hu"]
-    with open(args.out, "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
-
-    print(f"\nWrote {len(rows)} organ-row(s) to {args.out}")
+    csv_file.close()
+    print(f"\nDone. Wrote {total_rows} new organ-row(s) to {args.out} this run.")
 
 
 if __name__ == "__main__":
