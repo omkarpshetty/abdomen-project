@@ -1,0 +1,22 @@
+{
+  "xgb_available": false,
+  "n_estimators": 300,
+  "xgb_n_estimators": 400,
+  "organs": [
+    "BONES",
+    "BOWEL",
+    "GALL BLADDER",
+    "HEART",
+    "KIDNEYS",
+    "LIVER",
+    "LUNGS",
+    "MUSCLE",
+    "PANCREAS",
+    "PROSTATE",
+    "SPINAL CORD",
+    "SPLEEN",
+    "STOMACH",
+    "URINARY BLADDER",
+    "VESSELS"
+  ]
+}
