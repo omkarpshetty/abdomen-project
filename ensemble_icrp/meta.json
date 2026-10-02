@@ -1,0 +1,30 @@
+{
+  "use_models": [
+    "lgb",
+    "rf",
+    "svr"
+  ],
+  "feature_cols": [
+    "organ_encoded",
+    "volume_cm3",
+    "mean_hu",
+    "mean_ctdivol_mGy"
+  ],
+  "organs": [
+    "BONES",
+    "BOWEL",
+    "GALL BLADDER",
+    "HEART",
+    "KIDNEYS",
+    "LIVER",
+    "LUNGS",
+    "MUSCLE",
+    "PANCREAS",
+    "PROSTATE",
+    "SPINAL CORD",
+    "SPLEEN",
+    "STOMACH",
+    "URINARY BLADDER",
+    "VESSELS"
+  ]
+}
