@@ -5,3 +5,27 @@ __pycache__/
 .venv/
 outputs/
 *.nii.gz
+# Patient / CT data
+data/patient_*/
+data/raw/
+*.dcm
+*.nii
+*.nii.gz
+
+# Trained models
+models/total_dose_predictor/
+models/trained_lightweight_ai/
+trained_model/
+trained_models_ensemble/
+saved_model/
+saved_model_full/
+sample_patient/
+*.pt
+*.pkl
+*.h5
+
+# Logs
+*.log
+download_log.txt
+training_log.txt
+training_lightweight_log.txt

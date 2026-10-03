@@ -1,0 +1,210 @@
+# Training Configuration for CPU-Optimized Dose Prediction
+
+# Model Selection
+model:
+  type: "ensemble"  # Options: nn, xgboost, cnn, transformer, ensemble
+  device: "cpu"
+
+# Training Modes
+mode: "full"  # Options: fast (hours), medium (1 day), full (3 days)
+
+# Fast Mode (3-6 hours on modern CPU)
+fast:
+  epochs: 50
+  batch_size: 64
+  n_estimators: 100  # XGBoost trees
+  max_depth: 6
+  early_stopping_patience: 10
+  validation_split: 0.2
+  num_workers: 4
+
+# Medium Mode (12-24 hours)
+medium:
+  epochs: 150
+  batch_size: 32
+  n_estimators: 300
+  max_depth: 8
+  early_stopping_patience: 15
+  validation_split: 0.2
+  num_workers: 8
+
+# Full Mode (~3 days)
+full:
+  epochs: 300
+  batch_size: 16
+  n_estimators: 500
+  max_depth: 10
+  early_stopping_patience: 25
+  validation_split: 0.2
+  num_workers: -1  # Use all available cores
+
+# Neural Network Architecture
+neural_network:
+  embedding_dim: 16
+  hidden_dims: [256, 128, 64]
+  dropout: [0.3, 0.3, 0.2]
+  activation: "relu"
+  batch_norm: true
+
+# XGBoost Parameters
+xgboost:
+  objective: "reg:squarederror"
+  learning_rate: 0.05
+  subsample: 0.8
+  colsample_bytree: 0.8
+  reg_alpha: 0.1  # L1 regularization
+  reg_lambda: 1.0  # L2 regularization
+  min_child_weight: 5
+
+# Physics-Informed Loss
+physics_loss:
+  enabled: true
+  weight: 0.1  # Weight for physics constraint terms
+  constraints:
+    # HU-density consistency: organs with similar HU should have similar dose/attenuation
+    hu_consistency:
+      enabled: true
+      weight: 0.05
+
+    # Non-negativity: dose must be >= 0
+    non_negativity:
+      enabled: true
+      weight: 0.1
+
+    # Spatial smoothness: neighboring organs should have smooth dose transitions
+    spatial_smoothness:
+      enabled: true
+      weight: 0.03
+
+    # Dose conservation: total energy delivered must be conserved
+    energy_conservation:
+      enabled: true
+      weight: 0.02
+
+    # Inverse square law approximation: dose falls off with distance
+    distance_falloff:
+      enabled: true
+      weight: 0.01
+
+# Data Pipeline
+data:
+  train_split: 0.7
+  val_split: 0.15
+  test_split: 0.15
+  split_by: "patient"  # Ensure no patient leakage
+
+  # Augmentation (physics-preserving only)
+  augmentation:
+    enabled: true
+    # Small HU jitter (scanner noise)
+    hu_noise_std: 5.0
+    # Volume uncertainty
+    volume_noise_std: 0.02  # 2% uncertainty
+
+  # Caching
+  cache:
+    enabled: true
+    format: "parquet"  # Fast columnar format
+    location: "./cache/"
+
+  # Preprocessing
+  preprocessing:
+    normalize_hu: true
+    hu_range: [-1024, 3071]  # Standard CT HU range
+    normalize_features: true
+
+# Optimization
+optimizer:
+  type: "adam"
+  learning_rate: 0.001
+  weight_decay: 1e-5
+  gradient_clip_norm: 1.0
+
+  # Learning rate schedule
+  scheduler:
+    type: "reduce_on_plateau"
+    factor: 0.5
+    patience: 10
+    min_lr: 1e-6
+
+# Checkpointing
+checkpoint:
+  enabled: true
+  save_dir: "./checkpoints/"
+  save_every_n_epochs: 10
+  keep_best_n: 3
+  monitor: "val_mae"
+  mode: "min"
+
+  # Resume from checkpoint
+  resume:
+    enabled: false
+    path: null  # Set to checkpoint path to resume
+
+# Logging
+logging:
+  tensorboard: true
+  log_dir: "./logs/"
+  log_every_n_steps: 50
+
+  # Metrics to track
+  metrics:
+    - mae
+    - rmse
+    - r2
+    - mape  # Mean absolute percentage error
+    - per_organ_mae
+
+# Cross-Validation
+cross_validation:
+  enabled: true
+  n_folds: 5
+  stratify_by: "patient"  # Patient-wise CV
+
+# Ensemble Configuration
+ensemble:
+  models:
+    - patient_specific_nn
+    - xgboost
+    # CNN and transformer optional (require more compute)
+
+  # Weight learning
+  learn_weights: true
+  weight_search:
+    method: "grid"  # Options: grid, bayesian
+    n_trials: 121  # 11x11 grid for 2 models
+
+  # Uncertainty quantification
+  uncertainty:
+    enabled: true
+    method: "ensemble_variance"  # Model disagreement
+    confidence_interval: 0.95
+
+# Hardware Optimization
+hardware:
+  # CPU-specific optimizations
+  cpu:
+    num_threads: -1  # Use all available cores (set by torch.set_num_threads)
+    inter_op_parallelism: 2
+    intra_op_parallelism: 0  # Auto
+
+  # Memory management
+  memory:
+    pin_memory: false  # Only useful for GPU
+    prefetch_factor: 2
+    persistent_workers: true
+
+# Random Seeds (for reproducibility)
+seed:
+  manual_seed: 42
+  cudnn_deterministic: true
+  cudnn_benchmark: false
+
+# Validation
+validation:
+  # Physics sanity checks
+  sanity_checks:
+    - dose_range: [0, 100]  # mGy
+    - dose_vs_kvp: "positive_correlation"
+    - dose_vs_mas: "positive_correlation"
+    - relative_organ_ranking: true  # High-dose organs rank correctly
