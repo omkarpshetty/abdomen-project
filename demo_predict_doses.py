@@ -9,6 +9,11 @@ This demonstrates the end-to-end pipeline:
 
 NO hardcoded values - pure AI prediction!
 """
+
+# Historical implementation retained for audit; use the supported pipeline.
+if __name__ == "__main__":
+    raise SystemExit("Retired entry point. Use: python -m ct_dose --help")
+
 from models.lightweight_ai_model import LightweightAIDoseModel
 import pandas as pd
 import sys

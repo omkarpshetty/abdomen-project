@@ -1,3 +1,5 @@
+> **Historical document.** Superseded by [README.md](README.md) and [docs/PIPELINE.md](docs/PIPELINE.md). Production readiness, accuracy, and dataset-validation claims below have not been carried forward.
+
 # Patient-Specific AI Organ Dose Estimation
 
 ## ✅ Project Status: COMPLETE & WORKING

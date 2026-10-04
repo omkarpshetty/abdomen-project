@@ -22,6 +22,11 @@ Usage:
     # Save results to CSV:
     python predict_patient_dose.py --dicom "path/to/patient_folder" --model ai_model/ --out results.csv
 """
+
+# Historical implementation retained for audit; use the supported pipeline.
+if __name__ == "__main__":
+    raise SystemExit("Retired entry point. Use: python -m ct_dose --help")
+
 import argparse
 import os
 import sys

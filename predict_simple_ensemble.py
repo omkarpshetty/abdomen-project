@@ -6,6 +6,11 @@ Uses both Neural Network and XGBoost, combines with simple averaging.
 Usage:
     python predict_simple_ensemble.py --dicom data/patient_138p
 """
+
+# Historical implementation retained for audit; use the supported pipeline.
+if __name__ == "__main__":
+    raise SystemExit("Retired entry point. Use: python -m ct_dose --help")
+
 import sys
 import argparse
 import pandas as pd

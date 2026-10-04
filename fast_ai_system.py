@@ -11,6 +11,11 @@ Uses REAL AI models (RF + XGBoost) but optimized for speed
 This is TRUE AI, not hardcoded formulas!
 """
 
+# Historical implementation retained for audit; use the supported pipeline.
+if __name__ == "__main__":
+    raise SystemExit("Retired entry point. Use: python -m ct_dose --help")
+
+
 import os
 import numpy as np
 import pandas as pd

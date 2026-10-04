@@ -1,3 +1,5 @@
+> **Historical document.** Superseded by [README.md](README.md) and [docs/PIPELINE.md](docs/PIPELINE.md). Production readiness, accuracy, and dataset-validation claims below have not been carried forward.
+
 # AI-Driven CT Organ Dose Estimation System
 
 Complete automated system for organ-specific and patient-specific CT dose estimation using artificial intelligence.

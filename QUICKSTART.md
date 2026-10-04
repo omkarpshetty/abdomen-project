@@ -1,3 +1,5 @@
+> **Historical document.** Use [README.md](README.md) and [docs/PIPELINE.md](docs/PIPELINE.md) for the supported workflow. Numerical accuracy and readiness claims below are unverified.
+
 # Quick Start Guide
 
 Get up and running with the AI dose estimation system in **3 simple steps**.

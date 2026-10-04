@@ -49,7 +49,7 @@ def draw_legend(img: Image.Image, organs_present: list) -> Image.Image:
     matching the style of your reference legend slide.
     """
     panel_w = 260
-    canvas = Image.new("RGB", (img.width + panel_w, img.height), "white")
+    canvas = Image.new("RGB", (img.width + panel_w, max(img.height, 20 + 24 * len(organs_present))), "white")
     canvas.paste(img, (0, 0))
     draw = ImageDraw.Draw(canvas)
 
@@ -70,7 +70,8 @@ def draw_legend(img: Image.Image, organs_present: list) -> Image.Image:
 
 def save_annotated_series(volume_hu: np.ndarray, organ_masks: dict, out_dir: str,
                            level: int = 40, width: int = 400,
-                           alpha: float = DEFAULT_ALPHA, with_legend: bool = True):
+                           alpha: float = DEFAULT_ALPHA, with_legend: bool = True,
+                           pixel_spacing_xy=None):
     """
     Writes one annotated PNG per axial slice into out_dir.
     organ_masks: dict[organ_name] -> 3D bool array [z, y, x], same shape as volume_hu.
@@ -84,6 +85,11 @@ def save_annotated_series(volume_hu: np.ndarray, organ_masks: dict, out_dir: str
         slice_masks = {o: organ_masks[o][z] for o in organs_present}
         rgb = overlay_slice(gray_vol[z], slice_masks, alpha)
         img = Image.fromarray(rgb)
+        if pixel_spacing_xy is not None:
+            physical_width = img.width * pixel_spacing_xy[0]
+            physical_height = img.height * pixel_spacing_xy[1]
+            scale = 512 / max(physical_width, physical_height)
+            img = img.resize((max(1, round(physical_width * scale)), max(1, round(physical_height * scale))), Image.Resampling.NEAREST)
         if with_legend:
             img = draw_legend(img, organs_present)
         img.save(os.path.join(out_dir, f"annotated_{z:04d}.png"))

@@ -1,3 +1,5 @@
+> **Historical document.** Superseded by [README.md](README.md) and [docs/PIPELINE.md](docs/PIPELINE.md). Production readiness, accuracy, and dataset-validation claims below have not been carried forward.
+
 # 🎯 FINAL PROJECT SUMMARY - Multi-Model Ensemble System
 
 ## ✅ COMPLETE & PRODUCTION-READY

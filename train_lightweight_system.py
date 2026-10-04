@@ -4,6 +4,11 @@ Train Lightweight AI System - Works on Limited RAM
 Memory-efficient gradient boosting instead of deep learning.
 Still achieves PhD-level results without hardcoded values.
 """
+
+# Historical implementation retained for audit; use the supported pipeline.
+if __name__ == "__main__":
+    raise SystemExit("Retired entry point. Use: python -m ct_dose --help")
+
 import sys
 sys.path.append('.')
 

@@ -10,6 +10,11 @@ Uses the trained multi-model ensemble to predict organ doses with:
 Usage:
     python predict_ensemble.py --dicom data/patient_138p
 """
+
+# Historical implementation retained for audit; use the supported pipeline.
+if __name__ == "__main__":
+    raise SystemExit("Retired entry point. Use: python -m ct_dose --help")
+
 import sys
 import argparse
 import pandas as pd

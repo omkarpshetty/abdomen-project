@@ -4,6 +4,11 @@ Uses AI models with estimated organ features for new patients
 
 Usage: python predict_patient_streamlined.py --dicom ./data/patient_138p
 """
+
+# Historical implementation retained for audit; use the supported pipeline.
+if __name__ == "__main__":
+    raise SystemExit("Retired entry point. Use: python -m ct_dose --help")
+
 import os
 import sys
 import json

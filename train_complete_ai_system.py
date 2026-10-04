@@ -11,6 +11,11 @@ NO hardcoded dose values anywhere in inference.
 Training labels use ICRP Monte Carlo coefficients (best available physics),
 but the model learns to predict from features alone.
 """
+
+# Historical implementation retained for audit; use the supported pipeline.
+if __name__ == "__main__":
+    raise SystemExit("Retired entry point. Use: python -m ct_dose --help")
+
 import sys
 import argparse
 from pathlib import Path

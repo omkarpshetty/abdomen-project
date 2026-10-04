@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "datasets": [
+    {
+      "id": "CT-ORG-v1",
+      "source": "https://www.cancerimagingarchive.net/collection/ct-org/",
+      "doi": "10.7937/tcia.2019.tt7f4v7o",
+      "role": "candidate segmentation benchmark",
+      "labels": [
+        "liver",
+        "lungs",
+        "bones",
+        "kidneys",
+        "bladder",
+        "brain where present"
+      ],
+      "format": "NIfTI CT and multiclass masks",
+      "access": "Official 16.9 GB download requires IBM Aspera Connect; not acquired in task sandbox",
+      "organ_dose_references": false,
+      "pretraining_overlap": "unresolved; do not claim independent validation",
+      "license": "Verify the current collection license and retain attribution before acquisition"
+    },
+    {
+      "id": "TotalSegmentator-v2.8.0-upstream-fixture",
+      "source": "https://github.com/wasserth/TotalSegmentator/tree/v2.8.0/tests/reference_files",
+      "role": "real-image software integration only",
+      "license": "Upstream repository Apache-2.0; retain upstream notices",
+      "pretraining_overlap": "not established; upstream regression fixture is not independent ground truth",
+      "organ_dose_references": false
+    },
+    {
+      "id": "existing-icrp_dose_labels.csv",
+      "role": "legacy artifact audit only",
+      "qualified_reference": false,
+      "reason": "Generated using empirical coefficients and assumed patient characteristics; reference provenance not verified"
+    },
+    {
+      "id": "Medical-Segmentation-Decathlon",
+      "source": "http://medicaldecathlon.com/",
+      "license": "CC-BY-SA-4.0 per official project site",
+      "role": "additional candidate spleen and pancreas reference segmentation",
+      "tasks": [
+        "Task07_Pancreas",
+        "Task09_Spleen"
+      ],
+      "status": "not acquired; check adult eligibility and overlap before evaluation",
+      "organ_dose_references": false,
+      "pretraining_overlap": "unresolved"
+    }
+  ],
+  "organ_dose_training": {
+    "status": "blocked",
+    "reason": "No acquired, verified public per-organ dose references with matched scan features and usable license",
+    "scanner_metrics_are_organ_labels": false
+  }
+}

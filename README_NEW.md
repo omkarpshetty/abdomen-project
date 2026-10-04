@@ -1,3 +1,5 @@
+> **Historical document.** Superseded by [README.md](README.md) and [docs/PIPELINE.md](docs/PIPELINE.md). Production readiness, accuracy, and dataset-validation claims below have not been carried forward.
+
 # Patient-Specific AI Organ Dose Estimation
 
 A **pure AI-based system** for predicting organ-specific radiation doses from CT scans. This system learns dose patterns directly from patient anatomy and scan parameters—**no hardcoded ratios, no CTDIvol dependency**.

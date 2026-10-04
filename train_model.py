@@ -6,6 +6,11 @@ Simple script to train the AI model on your organ feature data.
 Usage:
     python train_model.py
 """
+
+# Historical implementation retained for audit; use the supported pipeline.
+if __name__ == "__main__":
+    raise SystemExit("Retired entry point. Use: python -m ct_dose --help")
+
 import sys
 from pathlib import Path
 

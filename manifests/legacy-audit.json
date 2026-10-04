@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "data": [
+    {
+      "path": "organ_features.csv",
+      "sha256": "389508a2647fcc18f4792d73cd7bf528350e1693ce7b5338d8c899b6fa54cbd1",
+      "rows": 2130,
+      "columns": [
+        "UID",
+        "PHASE",
+        "organ",
+        "volume_cm3",
+        "mean_hu"
+      ],
+      "missing_fields": {},
+      "qualified_reference": false
+    },
+    {
+      "path": "dicom_params.csv",
+      "sha256": "8acc6b92be0a8d2d29d6601cd3c052ee0fa7973bd4e3c9778b4593aa4504a6b4",
+      "rows": 282,
+      "columns": [
+        "UID",
+        "PHASE",
+        "mean_kvp",
+        "mean_tube_current_mA",
+        "mean_ctdivol_mGy",
+        "mean_exposure_time_ms",
+        "mean_exposure_mAs",
+        "pitch_factor",
+        "mean_slice_thickness_mm",
+        "scan_length_cm",
+        "estimated_dlp_mgycm"
+      ],
+      "missing_fields": {
+        "mean_ctdivol_mGy": 282,
+        "estimated_dlp_mgycm": 282
+      },
+      "qualified_reference": false
+    },
+    {
+      "path": "icrp_dose_labels.csv",
+      "sha256": "2c9de4445e83bd84e60763f79d50f3a346e17769326da4cf6da5cdc5ba18bb02",
+      "rows": 2130,
+      "columns": [
+        "UID",
+        "PHASE",
+        "organ",
+        "icrp_dose_mGy"
+      ],
+      "missing_fields": {
+        "icrp_dose_mGy": 0
+      },
+      "qualified_reference": false
+    },
+    {
+      "path": "size_features.csv",
+      "sha256": "6fb674857c5793d663279814a7681aa616f5a3082fb80fd11ac002aa1216fc51",
+      "rows": 282,
+      "columns": [
+        "UID",
+        "PHASE",
+        "n_slices",
+        "mean_effective_diameter_cm",
+        "mean_water_equiv_diameter_cm"
+      ],
+      "missing_fields": {},
+      "qualified_reference": false
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "ai_model/encoder.pkl",
+      "sha256": "22a0133b5665f63edc4b3882b4fd3c2eafeae6798e00bc700b32b6c2efade913",
+      "status": "quarantined_from_supported_inference",
+      "reason": "Legacy training provenance/feature contract does not satisfy new reference-data manifest"
+    },
+    {
+      "path": "ai_model/meta.json",
+      "sha256": "2b72a7343855d260debdbed76bec7fdd0904534c8df4d7bacc243d2a950013b1",
+      "status": "quarantined_from_supported_inference",
+      "reason": "Legacy training provenance/feature contract does not satisfy new reference-data manifest"
+    },
+    {
+      "path": "ai_model/neural_net.pt",
+      "sha256": "e29d53fa919138dbf52078c4aaa4e6a7c9db2a4bf1709812bb9413f3bdb232f1",
+      "status": "quarantined_from_supported_inference",
+      "reason": "Legacy training provenance/feature contract does not satisfy new reference-data manifest"
+    },
+    {
+      "path": "ai_model/scaler.pkl",
+      "sha256": "f8d82ff8b8a75bdef97b6560fcc92b5b2f8676cf9f850dd3704c011573ba308e",
+      "status": "quarantined_from_supported_inference",
+      "reason": "Legacy training provenance/feature contract does not satisfy new reference-data manifest"
+    },
+    {
+      "path": "ai_model_icrp/encoder.pkl",
+      "sha256": "22a0133b5665f63edc4b3882b4fd3c2eafeae6798e00bc700b32b6c2efade913",
+      "status": "quarantined_from_supported_inference",
+      "reason": "Legacy training provenance/feature contract does not satisfy new reference-data manifest"
+    },
+    {
+      "path": "ai_model_icrp/meta.json",
+      "sha256": "2b72a7343855d260debdbed76bec7fdd0904534c8df4d7bacc243d2a950013b1",
+      "status": "quarantined_from_supported_inference",
+      "reason": "Legacy training provenance/feature contract does not satisfy new reference-data manifest"
+    },
+    {
+      "path": "ai_model_icrp/neural_net.pt",
+      "sha256": "511054844d46e442c6495f22252787e31306234366b9bb148373534ece5485e5",
+      "status": "quarantined_from_supported_inference",
+      "reason": "Legacy training provenance/feature contract does not satisfy new reference-data manifest"
+    },
+    {
+      "path": "ai_model_icrp/scaler.pkl",
+      "sha256": "f8d82ff8b8a75bdef97b6560fcc92b5b2f8676cf9f850dd3704c011573ba308e",
+      "status": "quarantined_from_supported_inference",
+      "reason": "Legacy training provenance/feature contract does not satisfy new reference-data manifest"
+    },
+    {
+      "path": "ensemble_icrp/meta.pkl",
+      "sha256": "572d2235e3a00da1efb3c8d3424a9c80abc02ca022f730656632a2bcadce0942",
+      "status": "quarantined_from_supported_inference",
+      "reason": "Legacy training provenance/feature contract does not satisfy new reference-data manifest"
+    },
+    {
+      "path": "ensemble_icrp/rf.pkl",
+      "sha256": "51e76016a24748d8f753f420a8cdcbec8ea47601dad9d8f16414fe57993dd729",
+      "status": "quarantined_from_supported_inference",
+      "reason": "Legacy training provenance/feature contract does not satisfy new reference-data manifest"
+    },
+    {
+      "path": "ensemble_icrp/encoder.pkl",
+      "sha256": "22a0133b5665f63edc4b3882b4fd3c2eafeae6798e00bc700b32b6c2efade913",
+      "status": "quarantined_from_supported_inference",
+      "reason": "Legacy training provenance/feature contract does not satisfy new reference-data manifest"
+    },
+    {
+      "path": "ensemble_icrp/lgb.pkl",
+      "sha256": "e462b8d2df4e66e5ddf72e5d47749f986494606a45f78201c89eb63dc6287197",
+      "status": "quarantined_from_supported_inference",
+      "reason": "Legacy training provenance/feature contract does not satisfy new reference-data manifest"
+    },
+    {
+      "path": "ensemble_icrp/meta.json",
+      "sha256": "470effd50fe366629ef4b1f62d1719836a010e0da66485b96ee71cd094a1339a",
+      "status": "quarantined_from_supported_inference",
+      "reason": "Legacy training provenance/feature contract does not satisfy new reference-data manifest"
+    },
+    {
+      "path": "ensemble_icrp/scaler.pkl",
+      "sha256": "a829456d07bbcbbb1ab202cc21dc0a7ee764ecb65a9a96a1bfe3fdcc1793a057",
+      "status": "quarantined_from_supported_inference",
+      "reason": "Legacy training provenance/feature contract does not satisfy new reference-data manifest"
+    },
+    {
+      "path": "ensemble_icrp/svr.pkl",
+      "sha256": "ec19471883756cf23a796a2c629788b3517c447d18aa650a1b437563a79222f3",
+      "status": "quarantined_from_supported_inference",
+      "reason": "Legacy training provenance/feature contract does not satisfy new reference-data manifest"
+    },
+    {
+      "path": "trained_models/rf_xgb_ensemble/feature_cols.json",
+      "sha256": "b4e8c11764f5ff339b786a38a94dd37754869bcd74e1be21759f6b85b35563b8",
+      "status": "quarantined_from_supported_inference",
+      "reason": "Legacy training provenance/feature contract does not satisfy new reference-data manifest"
+    },
+    {
+      "path": "trained_models/rf_xgb_ensemble/model_meta.json",
+      "sha256": "ddcdf46d0de9436702c01af6ca42113f4a74f65f7e4e2d50b6b8bbd92a23121b",
+      "status": "quarantined_from_supported_inference",
+      "reason": "Legacy training provenance/feature contract does not satisfy new reference-data manifest"
+    }
+  ]
+}

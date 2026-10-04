@@ -1,3 +1,5 @@
+> **Historical document.** Superseded by [README.md](README.md) and [docs/PIPELINE.md](docs/PIPELINE.md). Production readiness, accuracy, and dataset-validation claims below have not been carried forward.
+
 # 🎓 SYSTEM COMPLETION REPORT
 ## PhD-Level Organ Dose Estimation System
 

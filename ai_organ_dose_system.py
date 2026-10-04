@@ -10,6 +10,11 @@ Integrates:
 End-to-end pipeline: DICOM → Organ Segmentation → Dose Prediction
 """
 
+# Historical implementation retained for audit; use the supported pipeline.
+if __name__ == "__main__":
+    raise SystemExit("Retired entry point. Use: python -m ct_dose --help")
+
+
 import os
 import sys
 import numpy as np

@@ -1,3 +1,5 @@
+> **Historical document.** Use [README.md](README.md) and [docs/PIPELINE.md](docs/PIPELINE.md) for the supported workflow. Numerical accuracy and readiness claims below are unverified.
+
 # 🎓 PhD-Level CT Organ Dose Estimation System - FINAL SUMMARY
 
 **Date**: October 3, 2026  

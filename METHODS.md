@@ -1,3 +1,5 @@
+> **Historical document.** Superseded by [README.md](README.md) and [docs/PIPELINE.md](docs/PIPELINE.md). Production readiness, accuracy, and dataset-validation claims below have not been carried forward.
+
 # PhD-Level CT Organ Dose Estimation System - Complete Documentation
 
 **Project**: AI-Based Organ Dose Prediction for Diagnostic CT  

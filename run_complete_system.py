@@ -6,6 +6,11 @@ Version: 2.0 - Fixed all organ detection issues
 Run this file to process patients and get organ dose estimates.
 """
 
+# Historical implementation retained for audit; use the supported pipeline.
+if __name__ == "__main__":
+    raise SystemExit("Retired entry point. Use: python -m ct_dose --help")
+
+
 import os
 import sys
 import numpy as np

@@ -16,6 +16,11 @@ Usage:
     # With CNN features (slower, more accurate):
     python train_ai_dose_model.py --labels organ_dose_labels.csv --extract-cnn --out ai_model/
 """
+
+# Historical implementation retained for audit; use the supported pipeline.
+if __name__ == "__main__":
+    raise SystemExit("Retired entry point. Use: python -m ct_dose --help")
+
 import argparse
 import pandas as pd
 import numpy as np

@@ -23,6 +23,11 @@ Usage:
     # Save results:
     python predict_organ_dose.py --dicom "path/to/dicom_folder" --model saved_model/ --out results.csv
 """
+
+# Historical implementation retained for audit; use the supported pipeline.
+if __name__ == "__main__":
+    raise SystemExit("Retired entry point. Use: python -m ct_dose --help")
+
 import argparse
 import os
 import shutil

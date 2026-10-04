@@ -13,6 +13,11 @@ Optimizations:
 Expected time: 15-20 seconds per patient (vs 50-70 seconds)
 """
 
+# Historical implementation retained for audit; use the supported pipeline.
+if __name__ == "__main__":
+    raise SystemExit("Retired entry point. Use: python -m ct_dose --help")
+
+
 import os
 import numpy as np
 import pandas as pd

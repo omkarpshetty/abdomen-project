@@ -1,3 +1,5 @@
+> **Historical document.** Use [README.md](README.md) and [docs/PIPELINE.md](docs/PIPELINE.md) for the supported workflow. Numerical accuracy and readiness claims below are unverified.
+
 # ✅ SYSTEM VERIFICATION REPORT
 
 **Date**: October 3, 2026  
