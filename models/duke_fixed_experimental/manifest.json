@@ -1,0 +1,1047 @@
+{
+  "schema_version": 1,
+  "features": [
+    "organ",
+    "volume_cm3",
+    "mean_hu",
+    "std_hu",
+    "ctdivol_mGy",
+    "kvp"
+  ],
+  "feature_units": {
+    "organ": "categorical",
+    "volume_cm3": "cm3",
+    "mean_hu": "HU",
+    "std_hu": "HU",
+    "ctdivol_mGy": "mGy",
+    "kvp": "kV"
+  },
+  "organs": [
+    "gallbladder",
+    "liver",
+    "pancreas",
+    "spleen",
+    "stomach",
+    "urinary_bladder"
+  ],
+  "bounds": {
+    "volume_cm3": [
+      0.08856576,
+      7881.919344000001
+    ],
+    "mean_hu": [
+      -470.09233244631474,
+      176.6330005396654
+    ],
+    "std_hu": [
+      12.241706376155246,
+      474.8572702661456
+    ],
+    "ctdivol_mGy": [
+      7.03,
+      7.03
+    ],
+    "kvp": [
+      120.0,
+      120.0
+    ]
+  },
+  "organ_bounds": {
+    "gallbladder": {
+      "volume_cm3": [
+        0.08856576,
+        122.02265898
+      ],
+      "mean_hu": [
+        31.185830692621096,
+        84.125
+      ],
+      "std_hu": [
+        12.241706376155246,
+        54.57995615669152
+      ],
+      "ctdivol_mGy": [
+        7.03,
+        7.03
+      ],
+      "kvp": [
+        120.0,
+        120.0
+      ]
+    },
+    "liver": {
+      "volume_cm3": [
+        4248.79279038,
+        7881.919344000001
+      ],
+      "mean_hu": [
+        112.09796973729036,
+        156.65669740860014
+      ],
+      "std_hu": [
+        18.64379653549086,
+        34.459878664117724
+      ],
+      "ctdivol_mGy": [
+        7.03,
+        7.03
+      ],
+      "kvp": [
+        120.0,
+        120.0
+      ]
+    },
+    "pancreas": {
+      "volume_cm3": [
+        72.44679168,
+        276.45696000000004
+      ],
+      "mean_hu": [
+        69.68250236966824,
+        170.93710087207307
+      ],
+      "std_hu": [
+        22.527091468150804,
+        31.570501124092058
+      ],
+      "ctdivol_mGy": [
+        7.03,
+        7.03
+      ],
+      "kvp": [
+        120.0,
+        120.0
+      ]
+    },
+    "spleen": {
+      "volume_cm3": [
+        374.6921652,
+        1787.94689364
+      ],
+      "mean_hu": [
+        110.56638518999677,
+        176.6330005396654
+      ],
+      "std_hu": [
+        15.52887847475917,
+        38.52173972890503
+      ],
+      "ctdivol_mGy": [
+        7.03,
+        7.03
+      ],
+      "kvp": [
+        120.0,
+        120.0
+      ]
+    },
+    "stomach": {
+      "volume_cm3": [
+        490.12283034,
+        2019.36429702
+      ],
+      "mean_hu": [
+        -470.09233244631474,
+        83.27910516182268
+      ],
+      "std_hu": [
+        96.41766676233466,
+        474.8572702661456
+      ],
+      "ctdivol_mGy": [
+        7.03,
+        7.03
+      ],
+      "kvp": [
+        120.0,
+        120.0
+      ]
+    },
+    "urinary_bladder": {
+      "volume_cm3": [
+        42.77726208000001,
+        301.98813498
+      ],
+      "mean_hu": [
+        -1.3486024844720497,
+        45.84429924530213
+      ],
+      "std_hu": [
+        20.460395405340424,
+        87.22259544783707
+      ],
+      "ctdivol_mGy": [
+        7.03,
+        7.03
+      ],
+      "kvp": [
+        120.0,
+        120.0
+      ]
+    }
+  },
+  "bound_tolerance": {
+    "relative": 1e-06,
+    "absolute": 1e-08,
+    "purpose": "Floating-point serialization noise only"
+  },
+  "dependencies": {
+    "numpy": "1.26.4",
+    "scikit-learn": "1.6.1",
+    "xgboost": "2.1.4",
+    "joblib": "1.4.2"
+  },
+  "model_sha256": "9c32e1306988818d77396d7851066aa1b65786686a16bbbb9d69c7f8178000ef",
+  "dataset": {
+    "dataset_id": "Duke-Zenodo-3579490-abdo-fixed",
+    "source_url": "https://zenodo.org/records/3579490",
+    "license": "CC-BY-4.0",
+    "attribution": "Ehsan Samei, Francesco Ria, Xiaoyu Tian, Paul W Segars (2019)",
+    "reference_method": "validated_monte_carlo",
+    "reference_evidence": "Publisher describes verified Monte Carlo organ doses; Abdo_Fixed.xlsx supplies mGy targets. Publisher validation is not independent validation of this surrogate.",
+    "population": "adult",
+    "region": "abdomen_pelvis",
+    "data_sha256": "394a363d6f0c51cb9bdc6125a6d3010e9077653579a6514c6eeff82a7b186696",
+    "available_patients": 40,
+    "selected_patients": 10,
+    "selection_policy": "Published worksheet order; pilot convenience subset",
+    "archive_md5": "f813e3186ae7eb22eb83ff2c33a095d7",
+    "dose_workbook_sha256": "5d0637b3234db83115bd81e3c949206f54b1123c4aa9ce76af1047d917dc83a0",
+    "metadata_workbook_sha256": "d86e2355421ac1b43b2eef0968a81f8b5ec99dcd0f243ab6c0429e49888d6879",
+    "features": [
+      "organ",
+      "volume_cm3",
+      "mean_hu",
+      "std_hu",
+      "ctdivol_mGy",
+      "kvp"
+    ],
+    "protocol_profile": "duke-3579490-abdo-fixed-v1",
+    "experimental_only": true,
+    "input_geometry_validation": "pending publisher confirmation",
+    "segmentation_resolution": "fast",
+    "segmentation_version": "2.8.0",
+    "acquisition_scope": {
+      "kvp": 120,
+      "kvp_source": "Archive acquisition spectrum at 120 kVp",
+      "tube_current": "fixed",
+      "pitch": 0.8,
+      "collimation_mm": 38.4,
+      "source_isocentre_cm": 59.5,
+      "ctdi_phantom_cm": 32,
+      "scanner_model": "Published benchmark geometry/spectrum/bowtie only"
+    },
+    "image_decoding": {
+      "dtype": ">i2",
+      "layout": "zyx C order",
+      "intensity": "signed HU without offset",
+      "spacing": "Patient_information.xlsx unchanged",
+      "orientation": "relative LPS, superior-to-inferior slices inferred visually; no source affine"
+    },
+    "limitations": [
+      "10 selected patients of 40 available; internal holdout only",
+      "No expert organ masks supplied",
+      "Raw-image encoding/orientation interpretation requires publisher confirmation",
+      "Published spacing used verbatim; unusually large derived volumes require investigation",
+      "Body diameter omitted from model features when unreliable; unavailable sizes retained in audit",
+      "No validation outside the published fixed-current acquisition or on real clinical deployments"
+    ],
+    "patient_audit": [
+      {
+        "patient_id": "pt071",
+        "age": 27,
+        "raw_sha256": "1f5fcecd46336fc9b7c73bc3f08e002ca28ca979dacbe864fdb24efe54ca18cb",
+        "included_organs": [
+          "liver",
+          "spleen",
+          "pancreas",
+          "stomach",
+          "urinary_bladder"
+        ],
+        "excluded_organs": [
+          "gallbladder"
+        ],
+        "organ_status": {
+          "liver": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "dc5f918aec74686d47d46fff763dae4d3a79d6ffee44c17a2b7dd9d405f4f7b4",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "spleen": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "3ffc633f80aaeb4a020d9e25a6c2c2003e1243200567a2214bf0b9ce6d39d8e7",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "pancreas": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "48a6764da773f08bc7c601e41bdbf607de29bcf2c0e0ee7ef4f964c8ad77040d",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "stomach": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "42a7ee6a0e13584afd4616594a63ee0463a470e87d3240cf2e216474bf75a22c",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "gallbladder": {
+            "status": "empty",
+            "reason": "Absent, out of field, or segmentation failed",
+            "source": "TotalSegmentator 2.8.0"
+          },
+          "urinary_bladder": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "af22106ffc23c379c01b95801b397b177d5c99573efc8728d7eae53ffa556381",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          }
+        },
+        "body_size": {
+          "value": null,
+          "unit": "cm",
+          "source": "CT pixels: AAPM 220 water-equivalent area",
+          "status": "unavailable",
+          "reason": "Truncated body outline"
+        }
+      },
+      {
+        "patient_id": "pt076",
+        "age": 31,
+        "raw_sha256": "9640e39f4c5642972430c9a6a3250fba8b64159700822c978071b92ea160cc85",
+        "included_organs": [
+          "liver",
+          "spleen",
+          "pancreas",
+          "stomach",
+          "gallbladder",
+          "urinary_bladder"
+        ],
+        "excluded_organs": [],
+        "organ_status": {
+          "liver": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "c1ae7d504ef6deb67aa3344e26a22564b67ae1b66d4b27969e96d0941788a6ae",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "spleen": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "71765b62d74a5f13cdb791ac15b61d75b5f70449773fddb03194b85e36a57529",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "pancreas": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "fef3a0cc9b3edaad05b0d839abcd5525050c5f093fe953c660f41a7a67b15a70",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "stomach": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "55164bc023e2d74f4334ed4e88150fd6f551f0e26500bd4588837ac7c63cf14e",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "gallbladder": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "5335f98dc6796029a34af486974a16da97d81e066bdb508df6e60eaf1574636e",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "urinary_bladder": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "7748c90ed6f399ce6ee2cafc588f75f3aa791fe7e9a0bacc282e76b67cba6dad",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          }
+        },
+        "body_size": {
+          "value": null,
+          "unit": "cm",
+          "source": "CT pixels: AAPM 220 water-equivalent area",
+          "status": "unavailable",
+          "reason": "Truncated body outline"
+        }
+      },
+      {
+        "patient_id": "pt080",
+        "age": 33,
+        "raw_sha256": "ec1d9741bb4807837f358a7493e7b4b0bb26e7993c29d6f4f6aecc3648d19d02",
+        "included_organs": [
+          "liver",
+          "spleen",
+          "pancreas",
+          "stomach",
+          "gallbladder",
+          "urinary_bladder"
+        ],
+        "excluded_organs": [],
+        "organ_status": {
+          "liver": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "8f38de64441bd9ff4a8d23c873a71dddf4019ce05863d463531fe08ea3390ade",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "spleen": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "9893f0b17c5edc585211726f7af88aa8595675568d7aba563fd31e097dbab7c3",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "pancreas": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "bc5eb645bc0121791095fafdc95a5a20256d070e4510e6af3b1ee0da2a5e7919",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "stomach": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "76b6b62a5353f520e22d603bc607c3a277136fa8967f74cafd30779e700ebfb4",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "gallbladder": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "fffb3dc9db9f2e87e5c7c8d4aeab6c3bb4363213debf5f581454a63f295e5746",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "urinary_bladder": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "41fb0c512a4dc270452ff13c73884234d1106155bd4a9cd581be99d1f24350e3",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          }
+        },
+        "body_size": {
+          "value": null,
+          "unit": "cm",
+          "source": "CT pixels: AAPM 220 water-equivalent area",
+          "status": "unavailable",
+          "reason": "Truncated body outline"
+        }
+      },
+      {
+        "patient_id": "pt086",
+        "age": 36,
+        "raw_sha256": "70482242f926a7dbb0f9481bc5adc5468b6c167286d53a9251a7a3d9b5774056",
+        "included_organs": [
+          "liver",
+          "spleen",
+          "pancreas",
+          "stomach",
+          "gallbladder",
+          "urinary_bladder"
+        ],
+        "excluded_organs": [],
+        "organ_status": {
+          "liver": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "e6c139771ddd03a7229708ce39218ea3d77a8963a65f9dddf1c4d614e9247c72",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "spleen": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "d8bd57c0289eb2defa983c6bbf4fda0c9064f19bb229579c8f6555ef8dd92860",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "pancreas": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "b8bf3297363c3460d1b5db623bbb88bf0c43fb69175084619dc968ca0cd1258c",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "stomach": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "8c52995e78f0cd6a34d2b9a67f157392a8278d9c9962cc0fd2f55b3546e8ccd1",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "gallbladder": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "aac86bbc533c18274b0d65076ca4d3eef3dc3074e7ffa972fbe7f8081cedcfb8",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "urinary_bladder": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "dd3eae93aa5c6d3c07eb37e480b308dafddf32aed5fd11bbb14c0df7c09f19f5",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          }
+        },
+        "body_size": {
+          "value": null,
+          "unit": "cm",
+          "source": "CT pixels: AAPM 220 water-equivalent area",
+          "status": "unavailable",
+          "reason": "Truncated body outline"
+        }
+      },
+      {
+        "patient_id": "pt089",
+        "age": 37,
+        "raw_sha256": "d217740970e51c076a36f3521843afcd0fcf9259d253015bd702252d2bf0393f",
+        "included_organs": [
+          "liver",
+          "spleen",
+          "pancreas",
+          "stomach",
+          "gallbladder",
+          "urinary_bladder"
+        ],
+        "excluded_organs": [],
+        "organ_status": {
+          "liver": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "bc3c3f845a64947fabee94276f7effdd8491a772ab3aff27b621f0d23aa7cfc1",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "spleen": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "19e260f7e8d2394c482b58ecfed5ab7bdafac4630cb00f3260f21eee595b95eb",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "pancreas": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "bb7a16798c468358a4d537f5f0b694d6fdce8a05df03bf8d458525c49c6cc62b",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "stomach": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "eed00360c9e548da6c1b49e12f3ea46c19d074a57a03a1666ac8f6e7fadb2fea",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "gallbladder": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "8ee26c0cd0c9bb1ec43029fb4cc07de50e878893171a5d6e4df8a1ecc8c71f16",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "urinary_bladder": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "073de21170550a253fd0cb2bea0c62b0dcef0612217741074a3296a69d685c96",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          }
+        },
+        "body_size": {
+          "value": null,
+          "unit": "cm",
+          "source": "CT pixels: AAPM 220 water-equivalent area",
+          "status": "unavailable",
+          "reason": "Truncated body outline"
+        }
+      },
+      {
+        "patient_id": "pt092",
+        "age": 38,
+        "raw_sha256": "71d9b3be1ff12ae2a8be0af7e01b6a07bb883a6b548d87cae1893fa63b9db894",
+        "included_organs": [
+          "liver",
+          "spleen",
+          "pancreas",
+          "stomach",
+          "gallbladder"
+        ],
+        "excluded_organs": [
+          "urinary_bladder"
+        ],
+        "organ_status": {
+          "liver": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "79315904c7e724298c7253005761b5617e2d4fd2ac0a2a698cc1798aeef51036",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "spleen": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "a3f54ee8468f1a812ca32d630b0afd3ba0e70a3045b7bd9c9fdc4bd0655e494c",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "pancreas": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "c3594653713feedb74f37a14a04ab459f4c7c0770aab69925781b9adbd126aae",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "stomach": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "76c45bea209131ba56d8c1cc535d73cf6308f1137cba8958cede2201a1daea22",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "gallbladder": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "504da66b08af8571ebc69e007c85c0db2f9a26017721775f5e686101b06ba5cd",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "urinary_bladder": {
+            "status": "empty",
+            "reason": "Absent, out of field, or segmentation failed",
+            "source": "TotalSegmentator 2.8.0"
+          }
+        },
+        "body_size": {
+          "value": null,
+          "unit": "cm",
+          "source": "CT pixels: AAPM 220 water-equivalent area",
+          "status": "unavailable",
+          "reason": "Truncated body outline"
+        }
+      },
+      {
+        "patient_id": "pt093",
+        "age": 44,
+        "raw_sha256": "cb30284067c6181b9cffb9504bd24d7c8cf4212352afa9076268590c20351e3b",
+        "included_organs": [
+          "liver",
+          "spleen",
+          "pancreas",
+          "stomach",
+          "gallbladder",
+          "urinary_bladder"
+        ],
+        "excluded_organs": [],
+        "organ_status": {
+          "liver": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "dd9f9eb4233046cf5ea9947ebc63e580a5b6923c521ac7a1c815a57be93513ac",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "spleen": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "84c20935398503d13c426e8bf32a18e9bd326280d1f6fdf42d3e3d0c39711134",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "pancreas": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "fd04c7f88090f80e4c9cfa7803670ce01edb524f8f4e831d064c61b5f1d04887",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "stomach": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "22730b16ffcf09136635b75b6682bcb63b45607265c9aa7cfbeb2bae5f6141d1",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "gallbladder": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "7e6064d9956d7f8fa313b79479c2a91fd3e732bad3d3588f981826db0adab272",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "urinary_bladder": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "d8c060a0d8e385fa67a030a703e6c4159651c0f1f9c246cf69dbf06e1747d608",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          }
+        },
+        "body_size": {
+          "value": null,
+          "unit": "cm",
+          "source": "CT pixels: AAPM 220 water-equivalent area",
+          "status": "unavailable",
+          "reason": "Truncated body outline"
+        }
+      },
+      {
+        "patient_id": "pt096",
+        "age": 48,
+        "raw_sha256": "23f64d9bce2f223e79318f421b519616c12bf3ffa387893e1415775f22aaacce",
+        "included_organs": [
+          "liver",
+          "spleen",
+          "pancreas",
+          "stomach",
+          "gallbladder",
+          "urinary_bladder"
+        ],
+        "excluded_organs": [],
+        "organ_status": {
+          "liver": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "854fa7ff1862dedad79c55a344fd039f00a1eabfbf1c48837b445bd4b65c85e4",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "spleen": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "2307637a248d5c3a478a81e4988b0c3a9af7caf8817aae74e5a7bcaf4c15b85c",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "pancreas": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "d2763e511a6d6cfe97616eddab083af00471bdd6176f2163a32347a943e126ea",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "stomach": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "55267a76eb73b2691b2737441414e51e1de840cdc3337c8fc025528176824072",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "gallbladder": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "45dfccddbe8c420bed573d30925d8a3321db15e4c447b3dae02aaf4bf44a0226",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "urinary_bladder": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "f5ebe4890bd560fc6098e0ac8d8bf046bfd9d8cd4ad92bd7c759a8e7836c5712",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          }
+        },
+        "body_size": {
+          "value": null,
+          "unit": "cm",
+          "source": "CT pixels: AAPM 220 water-equivalent area",
+          "status": "unavailable",
+          "reason": "Truncated body outline"
+        }
+      },
+      {
+        "patient_id": "pt106",
+        "age": 58,
+        "raw_sha256": "216ead34d6be1c563fa5993de1d7620772cce06b594124c05a7bb657af2a0a2d",
+        "included_organs": [
+          "liver",
+          "spleen",
+          "pancreas",
+          "stomach",
+          "gallbladder"
+        ],
+        "excluded_organs": [
+          "urinary_bladder"
+        ],
+        "organ_status": {
+          "liver": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "2a8f43320c29ecb0e54e64922c3fc23bd7bab1ca6b45d56827117f529eaa226f",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "spleen": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "ea58544be07ecde30595f34b875e0c1e169fcbd328365423489331cc87366972",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "pancreas": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "45641ccf383c19e3dabd6e4cfe3f26b4a112c4d12adbd49b035c8bd64b6c363d",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "stomach": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "5f59203f8695524fa49a938e2ff8499785a72e4954b90f3587946a01c0bfaa47",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "gallbladder": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "8fbdcca1ec531073e20a2967e2eb17d90cd521b54b3c6e9f677d799ab4721c75",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "urinary_bladder": {
+            "status": "empty",
+            "reason": "Absent, out of field, or segmentation failed",
+            "source": "TotalSegmentator 2.8.0"
+          }
+        },
+        "body_size": {
+          "value": null,
+          "unit": "cm",
+          "source": "CT pixels: AAPM 220 water-equivalent area",
+          "status": "unavailable",
+          "reason": "Truncated body outline"
+        }
+      },
+      {
+        "patient_id": "pt117",
+        "age": 63,
+        "raw_sha256": "eaa8f4ea66ddad0440d396d1c6b73d9d4adff941b4f3ada9c243d5b3d352d9a1",
+        "included_organs": [
+          "liver",
+          "spleen",
+          "pancreas",
+          "stomach",
+          "gallbladder",
+          "urinary_bladder"
+        ],
+        "excluded_organs": [],
+        "organ_status": {
+          "liver": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "cf6e8446ca87825b6656af8129e99360664208101c2757b59ef0b5b8809edcf6",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "spleen": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "9c23c6bdad5da47263478d80e22af48a6adf743b78e85f612392c4d4314c39d0",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "pancreas": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "a2d884fd4d42a9c66b473b923a8df8fc46d78c9488b417725d4ac2173a7ea5e3",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "stomach": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "7926eda3dd98fd1b95d221e59f048f8a582cb836c5b4db4f19d79bc77b29bea8",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "gallbladder": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "46e84bc67df90341d73ccb980ebaa719396c996c99cb70f29130686a41856ddd",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          },
+          "urinary_bladder": {
+            "status": "present",
+            "source": "TotalSegmentator 2.8.0",
+            "input_sha256": "254aa20e31e02e568540124b8ef759bb6724f6eb8108ae5960a3eeaf7a67d387",
+            "touches_image_boundary": false,
+            "coverage": "not_verified"
+          }
+        },
+        "body_size": {
+          "value": null,
+          "unit": "cm",
+          "source": "CT pixels: AAPM 220 water-equivalent area",
+          "status": "unavailable",
+          "reason": "Truncated body outline"
+        }
+      }
+    ]
+  },
+  "selected_model": "random_forest",
+  "training_configuration": {
+    "seed": 42,
+    "validation_split_seed": 43,
+    "preprocessing": "Organ one-hot; numeric passthrough; fit on training patients only",
+    "candidate_parameters": {
+      "random_forest": {
+        "n_estimators": 200,
+        "min_samples_leaf": 2,
+        "n_jobs": 1
+      },
+      "xgboost": {
+        "n_estimators": 200,
+        "max_depth": 4,
+        "learning_rate": 0.05,
+        "objective": "reg:squarederror",
+        "n_jobs": 1
+      }
+    }
+  },
+  "validation_metrics": {
+    "random_forest": {
+      "n": 12,
+      "mae_mGy": 1.3235703813822768,
+      "rmse_mGy": 1.5104121407909783,
+      "bias_mGy": 1.3235703813822768
+    },
+    "xgboost": {
+      "n": 12,
+      "mae_mGy": 1.5287571231842045,
+      "rmse_mGy": 1.697775334024241,
+      "bias_mGy": 1.5287571231842045
+    }
+  },
+  "test_metrics": {
+    "n": 11,
+    "mae_mGy": 0.848896378409091,
+    "rmse_mGy": 1.0894094421976495,
+    "bias_mGy": 0.39587690492424377
+  },
+  "test_metric_scope": "All held-out rows, including extrapolation; inference rejects out-of-range batches",
+  "in_range_test_rows": 4,
+  "in_range_test_metrics": {
+    "n": 4,
+    "mae_mGy": 1.0452096226190466,
+    "rmse_mGy": 1.1765571748086,
+    "bias_mGy": 0.43525715327381165
+  },
+  "baseline": {
+    "method": "Training-only per-organ mean",
+    "per_organ_mean_mGy": {
+      "gallbladder": 10.18844,
+      "liver": 8.967583333333334,
+      "pancreas": 8.628533333333333,
+      "spleen": 8.23345,
+      "stomach": 8.846633333333333,
+      "urinary_bladder": 8.12282
+    },
+    "validation": {
+      "n": 12,
+      "mae_mGy": 1.4079433333333335,
+      "rmse_mGy": 1.5131486846785565,
+      "bias_mGy": 1.4079433333333335
+    },
+    "test": {
+      "n": 11,
+      "mae_mGy": 1.0751,
+      "rmse_mGy": 1.246916649650552,
+      "bias_mGy": 1.0751
+    },
+    "selected_model_beats_validation_baseline": true
+  },
+  "test_stratified": {
+    "organ": {
+      "gallbladder": {
+        "n": 2,
+        "mae_mGy": 0.6338893851190477,
+        "rmse_mGy": 0.6860865089478242,
+        "bias_mGy": 0.2624860857142881
+      },
+      "liver": {
+        "n": 2,
+        "mae_mGy": 0.4263484376984126,
+        "rmse_mGy": 0.5999885965068693,
+        "bias_mGy": -0.42215320158729774
+      },
+      "pancreas": {
+        "n": 2,
+        "mae_mGy": 0.7561559537698432,
+        "rmse_mGy": 0.9151828903701965,
+        "bias_mGy": -0.5155462117063472
+      },
+      "spleen": {
+        "n": 2,
+        "mae_mGy": 0.7128292457341283,
+        "rmse_mGy": 0.809268922245595,
+        "bias_mGy": 0.7128292457341283
+      },
+      "stomach": {
+        "n": 2,
+        "mae_mGy": 1.0341373999999983,
+        "rmse_mGy": 1.3265465176907303,
+        "bias_mGy": 1.0341373999999983
+      },
+      "urinary_bladder": {
+        "n": 1,
+        "mae_mGy": 2.2111393178571417,
+        "rmse_mGy": 2.2111393178571417,
+        "bias_mGy": 2.2111393178571417
+      }
+    },
+    "protocol": {
+      "duke-3579490-abdo-fixed-v1": {
+        "n": 11,
+        "mae_mGy": 0.848896378409091,
+        "rmse_mGy": 1.0894094421976495,
+        "bias_mGy": 0.39587690492424377
+      }
+    },
+    "size_group": {
+      "unavailable": {
+        "n": 11,
+        "mae_mGy": 0.848896378409091,
+        "rmse_mGy": 1.0894094421976495,
+        "bias_mGy": 0.39587690492424377
+      }
+    }
+  },
+  "splits": {
+    "train": [
+      "pt071",
+      "pt080",
+      "pt086",
+      "pt092",
+      "pt093",
+      "pt096"
+    ],
+    "validation": [
+      "pt089",
+      "pt117"
+    ],
+    "test": [
+      "pt076",
+      "pt106"
+    ]
+  },
+  "clinical_validation": "pending",
+  "status": "experimental_geometry_unverified"
+}

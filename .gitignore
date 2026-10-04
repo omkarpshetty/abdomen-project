@@ -29,3 +29,6 @@ sample_patient/
 download_log.txt
 training_log.txt
 training_lightweight_log.txt
+
+# Reproducibly downloaded public CT datasets (keep large raw volumes out of Git)
+data/public/

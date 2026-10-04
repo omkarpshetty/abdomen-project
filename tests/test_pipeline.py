@@ -124,3 +124,39 @@ def test_equivalent_physical_images_render_identically(tmp_path):
         annotate(load_scan(ct), folder / 'run', organs=['liver'], masks_dir=masks)
         views.append(np.asarray(Image.open(folder / 'run/annotated_slices/annotated_0001.png')))
     np.testing.assert_array_equal(*views)
+
+
+def test_experimental_model_cannot_enter_primary_dose_report(dicom_series, tmp_path, monkeypatch):
+    from ct_dose import modeling
+    folder, _ = dicom_series(offsets=(0, 2, 4, 6, 8))
+    scan = load_scan(folder)
+    masks = tmp_path / 'masks'; masks.mkdir()
+    mask = np.zeros_like(scan.array, bool); mask[2, 5:8, 5:8] = True
+    write_mask(mask, scan.image, masks / 'liver.nii.gz')
+    def experimental(frame, path, context):
+        assert context['allow_experimental'] is True
+        return np.array([3.]), {'model_sha256': 'test', 'dataset': {'dataset_id': 'SYNTHETIC', 'experimental_only': True}}
+    monkeypatch.setattr(modeling, 'predict', experimental)
+    output = tmp_path / 'result'
+    assert main(['predict', str(folder), '--output', str(output), '--masks', str(masks),
+                 '--organs', 'liver', '--model', 'fixture', '--experimental-model']) == 0
+    assert json.loads((output / 'report.json').read_text())['organ_dose']['status'] == 'unavailable'
+    assert not (output / 'organ_doses.csv').exists()
+    assert (output / 'experimental_organ_doses.csv').exists()
+    assert json.loads((output / 'experimental_model.json').read_text())['status'] == 'experimental_model_prediction'
+
+
+def test_mask_statistics_match_integer_and_float_loader_paths(tmp_path):
+    from ct_dose.imaging import Scan
+    from ct_dose.segmentation import annotate
+    rng = np.random.default_rng(42)
+    pixels = rng.integers(-1000, 1000, size=(5, 20, 20), dtype=np.int16)
+    mask = np.zeros_like(pixels, bool); mask[1:4, 2:18, 2:18] = True
+    results = []
+    for dtype in (np.int16, np.float32):
+        image = sitk.GetImageFromArray(pixels.astype(dtype))
+        masks = tmp_path / dtype.__name__; masks.mkdir()
+        write_mask(mask, image, masks / 'liver.nii.gz')
+        result = annotate(Scan(image, [], 'synthetic', None), masks / 'run', ['liver'], masks_dir=masks)
+        results.append(result['measurements'])
+    assert results[0] == results[1]

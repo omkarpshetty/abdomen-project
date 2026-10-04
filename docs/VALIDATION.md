@@ -21,3 +21,7 @@ The SSDE body outline and mean-size approximation require independent comparison
 ## Reproduction
 
 Run `python -m pytest -q` and `python -m pip check` in the pinned environment. Run real-image validation with `scripts/validate_public_fixture.py --output <new-output-directory>`. This downloads only the small official upstream fixture and records hashes. Its comparison mask is an upstream model regression reference, not expert ground truth. Validation results from this task are recorded separately in the workspace validation record and generated Outputs report.
+
+## Public-data follow-up
+
+Duke Zenodo 3579490 has been acquired with the official archive checksum verified. Its matched images and publisher-described verified Monte Carlo labels support an experimental training benchmark. Raw geometry interpretation remains unresolved; body-size extraction is frequently unavailable. The model therefore does not pass the clinical dose gate. See [the data audit and reproduction guide](PUBLIC_DATA_TRAINING.md). Expert segmentation references and an independent pretraining-overlap audit remain outstanding.

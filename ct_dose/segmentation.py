@@ -96,7 +96,8 @@ def annotate(scan, output, organs=None, fast=False, masks_dir=None, corrections=
         touches = any(np.take(mask, idx, axis=axis).any() for axis in range(3) for idx in (0, -1))
         status[name] = {"status": "present", "source": provenance, "input_sha256": fingerprint([path]), "touches_image_boundary": bool(touches),
                         "coverage": "potentially_partial" if touches else "not_verified"}
-        values = scan.array[mask]
+        # Stable statistics for equivalent integer-HU and float32 loader paths.
+        values = scan.array[mask].astype(np.float64)
         measurements.append({"organ": name, "volume_cm3": float(mask.sum() * voxel_cm3),
                              "mean_hu": float(values.mean()), "std_hu": float(values.std()),
                              "coverage": status[name]["coverage"], "source": provenance})

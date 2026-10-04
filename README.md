@@ -2,7 +2,13 @@
 
 A reproducible Python pipeline for adult abdomen/pelvis CT on CPU. It segments organs, exports colored overlays and physical measurements, reports dose metadata and size estimates, and benchmarks dose models when qualified reference labels are supplied.
 
-**Status: software implementation for evaluation; clinical validation pending. No clinically qualified organ-dose model is included.** Historical production/accuracy claims in older documents are superseded by this README and [the pipeline contract](docs/PIPELINE.md).
+**Status: software implementation for evaluation; clinical validation pending. An experimental public-data dose training workflow is included; no clinically qualified organ-dose model is available.** Historical production/accuracy claims in older documents are superseded by this README and [the pipeline contract](docs/PIPELINE.md).
+
+## Public-data AI training
+
+See [the dataset audit, training instructions, and VS Code guide](docs/PUBLIC_DATA_TRAINING.md). The included quick pilot uses 10 of 40 available patients; the full workflow is resumable. This workflow uses Duke public CT scans and Monte Carlo organ-dose references, with patient-separated evaluation and explicit experimental reporting while source geometry questions remain unresolved.
+
+The trained artifact and measured pilot results are in [the model card](models/duke_fixed_experimental/MODEL_CARD.md). Random Forest was selected; its two-patient test MAE was 0.85 mGy, with only 4/11 test measurements inside the training domain. This is not a clinical accuracy claim.
 
 ## Install
 

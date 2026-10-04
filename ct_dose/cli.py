@@ -34,13 +34,20 @@ def parser():
         p.add_argument("--corrections", help="Expert binary NIfTI masks named by organ")
         p.add_argument("--rdsr", nargs="*", default=[])
         p.add_argument("--ctdivol", type=float)
+        p.add_argument("--kvp", type=float, help="Documented acquisition kVp override; requires --dose-source")
         p.add_argument("--dlp", type=float)
         p.add_argument("--phantom-cm", type=int, choices=[16, 32])
         p.add_argument("--dose-source", help="Provenance for explicit dose/phantom overrides")
         p.add_argument("--adult-confirmed", action="store_true", help="Confirm adult population when age cannot be established")
         if command == "predict":
+            p.add_argument("--experimental-model", action="store_true", help="Allow provisional trained models in a separate experimental report")
+            p.add_argument("--protocol-profile", help="Confirm acquisition matches the model manifest profile")
             p.add_argument("--model", help="Trusted local artifact from this pipeline's train command")
             p.add_argument("--exploratory", action="store_true", help="Write separate, unvalidated legacy formula estimates")
+    dataset = commands.add_parser("prepare-duke", help="Download/check Duke public CT dose references and extract AI features on CPU")
+    dataset.add_argument("--limit-patients", type=int, help="Explicit convenience subset for a quick experimental pilot; omitted means all patients")
+    dataset.add_argument("--data-dir", required=True, help="Download/cache directory (several GB)")
+    dataset.add_argument("--output", required=True, help="Resumable feature extraction directory")
     training = commands.add_parser("train")
     training.add_argument("--data", required=True)
     training.add_argument("--manifest", required=True)
@@ -76,7 +83,7 @@ def run_scan(args):
         raise ValueError("Output directory must be empty; prevents stale masks and cross-patient results")
     scan = load_scan(args.input, args.series_uid)
     adult_check(scan, args.adult_confirmed)
-    overrides = {name: getattr(args, name) for name in ("ctdivol", "dlp", "phantom_cm") if getattr(args, name) is not None}
+    overrides = {name: getattr(args, name) for name in ("ctdivol", "dlp", "phantom_cm", "kvp") if getattr(args, name) is not None}
     overrides["source"] = args.dose_source
     doses = dose_report(scan, args.rdsr, overrides)
     result = {"schema_version": 1, "pipeline_version": __version__, "scan_sha256": scan.fingerprint,
@@ -110,12 +117,23 @@ def run_scan(args):
                     raise ValueError("Organ touches image boundary; complete-organ prediction withheld")
                 if not q["ctdivol"].get("complete") or not q["kvp"].get("complete"):
                     raise ValueError("Incomplete CTDIvol or kVp metadata")
-                values, meta = predict(features, args.model)
+                values, meta = predict(features, args.model, context={
+                    "protocol_profile": args.protocol_profile, "allow_experimental": args.experimental_model,
+                    "ctdi_phantom_cm": q["ssde"].get("phantom_cm"),
+                    "segmentation_resolution": result["segmentation"]["resolution"],
+                    "segmentation_version": result["segmentation"]["version"]})
                 predictions = [{"organ": organ, "dose_mGy": float(value)} for organ, value in zip(features.organ, values)]
                 result["organ_dose"] = {"status": "research_prediction", "clinical_validation": "pending", "values": predictions,
                                         "model_sha256": meta["model_sha256"], "reference_dataset": meta["dataset"]["dataset_id"],
                                         "uncertainty": "Not calibrated; no confidence intervals claimed"}
-                pd.DataFrame(predictions).to_csv(destination / "organ_doses.csv", index=False)
+                if meta["dataset"].get("experimental_only"):
+                    result["organ_dose"]["status"] = "experimental_model_prediction"
+                    result["organ_dose"]["limitations"] = meta["dataset"].get("limitations", [])
+                    dump(destination / "experimental_model.json", result["organ_dose"])
+                    pd.DataFrame(predictions).to_csv(destination / "experimental_organ_doses.csv", index=False)
+                    result["organ_dose"] = {"status": "unavailable", "reason": "Dataset geometry unresolved; provisional model estimates exported separately"}
+                else:
+                    pd.DataFrame(predictions).to_csv(destination / "organ_doses.csv", index=False)
             except (ValueError, OSError, KeyError) as exc:
                 result["organ_dose"] = {"status": "unavailable", "reason": str(exc)}
         if args.exploratory:
@@ -152,6 +170,10 @@ def main(argv=None):
             result = run_scan(args)
             print(f"Report: {Path(args.output) / 'report.json'}")
             print(f"Organ dose: {result['organ_dose']['status']}; clinical validation pending")
+        elif args.command == "prepare-duke":
+            from .duke import prepare
+            result = prepare(args.data_dir, args.output, args.limit_patients)
+            print(f"Prepared dataset: {result['dataset_id']}")
         elif args.command == "train":
             from .modeling import train
             result = train(args.data, args.manifest, args.output)

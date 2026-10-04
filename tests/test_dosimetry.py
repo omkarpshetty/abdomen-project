@@ -101,3 +101,17 @@ def test_partial_headers_do_not_qualify_ssde(dicom_series):
     result = dose_report(scan, overrides={'phantom_cm': 32, 'source': 'fixture'})
     assert not result['quantities']['ctdivol']['complete']
     assert result['quantities']['ssde']['value'] is None
+
+
+def test_kvp_override_requires_provenance(dicom_series):
+    from ct_dose.imaging import load_scan
+    from ct_dose.dosimetry import dose_report
+    folder, _ = dicom_series()
+    scan = load_scan(folder)
+    import pytest
+    with pytest.raises(ValueError, match='source'):
+        dose_report(scan, overrides={'kvp': 120})
+    result = dose_report(scan, overrides={'kvp': 120, 'source': 'Synthetic protocol worksheet for software test'})
+    assert result['quantities']['kvp']['value'] == 120
+    assert result['quantities']['kvp']['complete']
+    assert result['quantities']['kvp']['source'].startswith('user:')

@@ -46,11 +46,47 @@
       "status": "not acquired; check adult eligibility and overlap before evaluation",
       "organ_dose_references": false,
       "pretraining_overlap": "unresolved"
+    },
+    {
+      "id": "Duke-Zenodo-3579490",
+      "source": "https://zenodo.org/records/3579490",
+      "title": "A database for benchmarking organ dose estimates and uncertainties in CT",
+      "attribution": "Ehsan Samei, Francesco Ria, Xiaoyu Tian, Paul W Segars (2019)",
+      "license": "CC-BY-4.0",
+      "archive_md5": "f813e3186ae7eb22eb83ff2c33a095d7",
+      "archive_size_bytes": 1375985412,
+      "role": "Experimental matched-image/Monte-Carlo dose training",
+      "status": "acquired and publisher checksum verified",
+      "patients": 40,
+      "age_range_years": [
+        18,
+        78
+      ],
+      "selected_protocol": "Abdominal fixed-current 120 kVp benchmark only",
+      "organ_dose_references": true,
+      "reference_type": "Publisher-described verified Monte Carlo doses",
+      "expert_segmentation_masks": false,
+      "pretraining_overlap": "Unresolved; do not claim independent segmentation validation",
+      "limitations": [
+        "Headerless raw CT geometry interpretation requires publisher confirmation",
+        "Published spacing produces unusually large organ volumes",
+        "Size extraction frequently unavailable due to truncation",
+        "Single protocol; no external cohort; no clinical acceptance"
+      ]
     }
   ],
   "organ_dose_training": {
-    "status": "blocked",
-    "reason": "No acquired, verified public per-organ dose references with matched scan features and usable license",
-    "scanner_metrics_are_organ_labels": false
+    "status": "experimental_pilot_trained",
+    "reference_labels_acquired": true,
+    "validated_model_status": "unavailable pending source geometry and external clinical validation",
+    "scanner_metrics_are_organ_labels": false,
+    "workflow": "python -m ct_dose prepare-duke; python -m ct_dose train",
+    "pilot_patient_limit": 10,
+    "remaining_full_cohort": "Resumable; user requested a quick pilot",
+    "trained_patients": 10,
+    "reference_rows": 57,
+    "selected_model": "random_forest",
+    "test_patients": 2,
+    "model_card": "models/duke_fixed_experimental/MODEL_CARD.md"
   }
 }

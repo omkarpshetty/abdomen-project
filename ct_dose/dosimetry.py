@@ -135,7 +135,7 @@ def dose_report(scan, rdsr_paths=(), overrides=None):
             phantom = single["phantom_cm"]
     metrics["dlp"] = quantity(single.get("dlp_mGy_cm") if single else None, "mGy.cm", "RDSR matched irradiation event",
                               None if single and "dlp_mGy_cm" in single else "No uniquely matched event DLP")
-    for name, unit in [("ctdivol", "mGy"), ("dlp", "mGy.cm")]:
+    for name, unit in [("ctdivol", "mGy"), ("dlp", "mGy.cm"), ("kvp", "kV")]:
         if name in overrides:
             val = float(overrides[name])
             if not math.isfinite(val) or val <= 0 or not overrides.get("source"):

@@ -72,3 +72,10 @@ def test_out_of_range_predictions_withheld(training_files, tmp_path):
     train(data, manifest, output)
     frame = pd.read_csv(data); frame.ctdivol_mGy = 1000
     with pytest.raises(ValueError, match='training range'): predict(frame, output)
+
+
+def test_domain_check_tolerates_only_serialization_noise():
+    from ct_dose.modeling import within_bounds
+    assert within_bounds(np.array([1000.00007]), 1000., 1000.).all()
+    assert not within_bounds(np.array([1000.1]), 1000., 1000.).any()
+    assert not within_bounds(np.array([100.]), 120., 120.).any()

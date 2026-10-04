@@ -85,3 +85,9 @@ Clinical acceptance thresholds, uncertainty calibration, external scanner valida
 ### CT-ORG reference preparation
 
 After acquiring the official files, run `python scripts/prepare_ctorg.py --labels labels-0.nii.gz --output references/case0`. This preserves native geometry and records the source checksum. Evaluate `liver`, `urinary_bladder`, `kidneys`, or `lungs`; the evaluator combines the corresponding predicted kidney/lung masks to match CT-ORG's bilateral labels. Do not compare a partial predicted bone set against CT-ORG's complete bone class. The official documentation has inconsistent A/B annotation-method descriptions; verify expert-reference provenance before claiming accuracy. Spleen and pancreas reference candidates are listed separately in the public-data manifest.
+
+## Duke public-data training extension
+
+`prepare-duke --data-dir <cache> --output <features>` acquires and verifies the fixed public reference archive, records patient/source identities, runs explicit fast CPU segmentation, and exports matched measurements and Monte Carlo labels. The model manifest can select the supported organ-only feature schema when water-equivalent diameter is unavailable; it cannot supply arbitrary feature definitions. Models are trained for one protocol per artifact, benchmarked against a training-only per-organ mean, and checked against organ-specific training bounds at inference.
+
+`--kvp` requires `--dose-source`. Protocol-specific artifacts require `--protocol-profile` and matching segmentation version/resolution. Provisional artifacts additionally require `--experimental-model`; their predictions are exported separately from the primary dose report. See [public-data training](PUBLIC_DATA_TRAINING.md) for restrictions and commands.
