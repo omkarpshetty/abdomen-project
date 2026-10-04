@@ -15,11 +15,18 @@ Provides:
 """
 import numpy as np
 import pandas as pd
-import torch
 from pathlib import Path
 import pickle
 import json
 from sklearn.metrics import mean_absolute_error, r2_score
+
+# Optional torch import with fallback
+try:
+    import torch
+    TORCH_AVAILABLE = True
+except (ImportError, OSError) as e:
+    TORCH_AVAILABLE = False
+    print(f"[INFO] PyTorch not available: {e}")
 
 
 class EnsembleDosePredictor:

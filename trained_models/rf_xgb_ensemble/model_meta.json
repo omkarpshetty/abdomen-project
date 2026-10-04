@@ -1,0 +1,14 @@
+{
+  "xgb_available": false,
+  "n_estimators": 100,
+  "xgb_n_estimators": 150,
+  "organs": [
+    "BONES",
+    "HEART",
+    "KIDNEY_LEFT",
+    "KIDNEY_RIGHT",
+    "LIVER",
+    "PANCREAS",
+    "SPLEEN"
+  ]
+}
