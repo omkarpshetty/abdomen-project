@@ -1,0 +1,38 @@
+{
+  "feature_columns": [
+    "organ_encoded",
+    "volume_cm3",
+    "mean_hu",
+    "median_hu",
+    "std_hu",
+    "distance_from_isocenter_mm",
+    "compactness",
+    "kvp",
+    "ctdivol_mgy",
+    "num_slices",
+    "slice_thickness_mm"
+  ],
+  "weights": {
+    "rf": 0.25,
+    "xgb": 0.35,
+    "nn": 0.4
+  },
+  "organs": [
+    "BONES",
+    "BOWEL",
+    "GALL BLADDER",
+    "HEART",
+    "KIDNEYS",
+    "LIVER",
+    "LUNGS",
+    "MUSCLE",
+    "PANCREAS",
+    "PROSTATE",
+    "SPINAL CORD",
+    "SPLEEN",
+    "STOMACH",
+    "URINARY BLADDER",
+    "VESSELS"
+  ],
+  "device": "cpu"
+}
